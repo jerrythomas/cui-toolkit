@@ -1,14 +1,7 @@
 #ifndef __MOUSE_H
 #define __MOUSE_H
 
-#ifndef __DOS_H
-#include <dos.h>
-#endif
-
-#include <NewTypes.H>
-/*#ifndef __CONTROL_H
-#include <Control.h>
-#endif*/
+#include <BaseInc.H>
 
 #define MouseActive    0x0001
 #define MousePress     0x0002
@@ -17,6 +10,7 @@
 #define MaskPressBit   0xFFFD
 #define MaskReleaseBit 0xFFFB
 #define MouseInt  0x33
+
 typedef struct
          {
            int  MajVerNo,
@@ -34,6 +28,7 @@ extern word     ms_Clix,
 		ms_Btn,
                 ms_PressCnt,
                 ms_ReleaseCnt;
+
 extern MouseInf ms_Inf;
 
 
@@ -80,6 +75,7 @@ extern MouseInf ms_Inf;
 //  void SoftMouseCur(Word aMask,Word xMask);
 
 #endif
+
 
 struct REGPACK EventHndl;
 union REGS     MouseReg;
