@@ -1,7 +1,7 @@
 #ifndef __FORM_H
 #define __FORM_H
 
-#include <Tools.h>
+#include <tools.h>
 #include <string.h>
 #include <kbd.h>
 #include <alloc.h>
@@ -147,6 +147,7 @@ class Tag : public Tool
 
      bool KeyDown(word Key);
  };
+
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 // <<>>                                                         <<>>
 // <<>>              Character User Interface Tool              <<>>

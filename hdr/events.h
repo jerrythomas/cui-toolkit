@@ -1,7 +1,7 @@
 #ifndef __EVENTS_H
 #define __EVENTS_H
 
-#include <CuiBase.h>
+#include <cuibase.h>
 
 #define cwMouseMove                0x0001
 #define cwMouseLeftClick           0x0002

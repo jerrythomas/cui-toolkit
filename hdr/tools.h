@@ -1,7 +1,7 @@
 #ifndef __TOOL_H
 #define __TOOL_H
-#include <CuiBase.h>
-#include <Events.h>
+#include <cuibase.h>
+#include <events.h>
 
 
 #define JustifyLeft   0x00
