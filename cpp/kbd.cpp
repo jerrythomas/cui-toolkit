@@ -1,4 +1,7 @@
 #include <Kbd.h>
+
+#include <string.h>
+
 #define KbdInt 0x16
 
 word KeyMap(word Key)
@@ -81,6 +84,7 @@ word GetKey()
   asm mov ah,0x10;
   asm int KbdInt;
   asm mov [[rvKey]],ax;
+
   return KeyMap(rvKey);
  }
 word KeyHit()
@@ -210,3 +214,61 @@ word Ctrl(char Alph)
 	 default  : return(0);
    }
  }
+
+void SubStr(char *Src,char *Dst,int Strt,int Len)
+ {
+  int i,l=strlen(Src);
+  for (i=0;i<Len && i<l-Strt;i++)
+     Dst[i] = Src[Strt+i];
+  Dst[i] = '\0';
+ }
+
+word StrToKey(char *src)
+ {
+  word rvKey=0,i=0,l;
+  char *tmp,dst[6],Cmp[7];
+  tmp = new(char[strlen(src)+1]);
+
+  strcpy(tmp,src);
+  strupr(tmp);
+  for (i=0;tmp[i]!='\0' && (tmp[i]<'A' || tmp[i]>'Z');i++);
+  switch(tmp[i])
+   {
+    case 'A':l=3;
+             strcpy(Cmp,"Alt");
+             break;
+    case 'C':l=4;
+             strcpy(Cmp,"Ctrl");
+             break;
+    case 'S':l=5;
+             strcpy(Cmp,"Shift");
+             break;
+    default :l=6;
+             strcpy(Cmp,"\0");
+             break;
+   }
+  if (l<6)
+   {
+    SubStr(tmp,dst,i,l);
+    if (!strcmpi(dst,Cmp))
+     {
+      for(i+=l;tmp[i]!='\0' && (tmp[i]<'A' || tmp[i]>'Z');i++);
+       if (tmp[i]=='F')
+        if (tmp[i+1] >= '0' && tmp[i+1] <='9')
+         {
+          SubStr(tmp,dst,i+1,2);
+          l -= 3;
+         }
+     }
+    switch(l)
+     {
+      case 0 : rvKey = AltF(atoi(dst));break;
+      case 1 : rvKey = CtrlF(atoi(dst));break;
+      case 2 : rvKey = ShiftF(atoi(dst));break;
+      case 3 : rvKey = Alt(tmp[i]);break;
+      case 4 : rvKey = Ctrl(tmp[i]);break;
+      //case 5 : rvKey = Shft(tmp[i]);break;
+     }
+   }
+   return(rvKey);
+  }

@@ -21,6 +21,260 @@
 #define max(v1,v2) ((v1) > (v2)) ? (v1):(v2)
 #define min(v1,v2) ((v1) < (v2)) ? (v1):(v2)
 
+struct far CurXYPos
+ {
+   byte x,y;
+ };
+
+struct far DspAdptInf
+ {
+   byte  VidModes[3];
+   dword Reserved1;
+   byte  AvlScanLns;
+   byte  AvlChrBlks;
+   byte  MaxActChrBlks;
+   word  MiscBIOSCpbl;
+   word  Reserved2;
+   byte  SaveAreaCpbl;
+   byte  Reserved3;
+ };
+
+struct VgaInf
+  {
+    DspAdptInf *V;
+    byte       CurVidMode;
+    word       NumChrClmns;
+    word       VidRefreshBufLen;
+    word       BufStrtAddr;
+    CurXYPos   Page[8];
+    byte       CurStrtScanLn;
+    byte       CurEndScanLn;
+    byte       ActDspPage;
+    word       AdptBasePortAddr;
+    byte       Regs3B8or3D8;
+    byte       Regs3B9or3D9;
+    byte       NumChrRows;
+    word       ChrHtScanLns;
+    byte       ActDspCode;
+    byte       InActDspCode;
+    word       MaxCols;
+    byte       MaxPages;
+    byte       NumScanLns;
+    byte       PriChrBlk;
+    byte       SecChrBlk;
+    byte       MiscStateInf;
+    byte       Reserved1[3];
+    byte       AvlVidMem;
+    byte       SavePtrStateInf;
+    byte       Reserved2[13];
+ };
+
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>                VDU :  Screen Information                <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+class VDU
+ {
+   public:
+     word     Delta;
+     byte     Width,Height;
+     byte     Pages,Colors;
+
+   private :
+     char     *PgBuf[8];
+
+   public :
+     VgaInf  Vai;
+
+     VDU();
+     void SetScreen();
+     char *BufAddr(byte Page);
+ };
+
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>                Mouse :  Mouse Information               <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+class Mouse
+  {
+    private :
+      int xSz,ySz;
+
+    public  :
+      int  x,y;
+      word BtnState;
+      word EvtFlags;
+
+      Mouse();
+      void SetMouse(int mx,int my,word Btn,word Evt);
+      void SetScale(int x_Sz,int y_Sz);
+  };
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>             ViewPort :  Screen ViewPorts                <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+class ViewPort
+  {
+    public :
+      byte X,Y,W,H;
+
+      ViewPort();
+      void Set(byte x,byte y,byte w,byte h);
+  };
+
+byte   GetAdapterInf(VgaInf *Vai);
+
+
+  word GetMaxX();
+  word GetMaxY();
+  byte GetMaxPg();
+  byte GetMaxCol();
+   void GetVidAt(byte Page, byte x ,byte y, byte& Chr, byte& Attr);
+   void SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr);
+   void ClrPage(byte Page, byte Attr);
+   void FillChr(byte L, byte T, byte R, byte B, byte Fill);
+   void ChrBox(byte L, byte T, byte R, byte B, byte Fill);
+
+   void DrawLineHz(byte xL, byte y, byte xR, byte Style);
+   void DrawLineVt(byte x, byte yT, byte yB, byte Style);
+   void DrawBox(byte L,byte T,byte R,byte B,byte Style);
+   void BoxShadow(byte L,byte T,byte R,byte B);
+
+   int  xPrintf(byte x, byte y, char *fmt,...);
+
+
+extern byte  ActPg,DrwPg,RufPg;
+extern VDU   Screen;
+extern Mouse Ms;
+extern ViewPort Vp;
+#endif
+byte     ActPg,DrwPg,RufPg;
+VDU      Screen;
+Mouse    Ms;
+ViewPort Vp;
+
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>                Obtain Video Adapter Info                <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+byte GetAdapterInf(VgaInf *Vai)
+ {
+/*  byte rv=0;
+  word wSeg = FP_SEG(Vai);
+  word wOff = FP_OFF(Vai);
+  asm push es;
+  asm push di;
+  asm mov  ax,0x1B00;
+  asm mov  bx,0;
+  asm mov  dx,wSeg;
+  asm mov  es,dx;
+  asm mov  di,wOff;
+  asm int  0x10;
+  asm pop  di;
+  asm pop  es;
+  asm cmp  al,0x1B;
+  asm jz   RET;
+  asm mov rv,1;
+  RET : return rv;*/
+  struct REGPACK reg;
+  reg.r_ax = 0x1B00;
+  reg.r_bx = 0;
+  reg.r_es = FP_SEG(Vai);
+  reg.r_di = FP_OFF(Vai);
+  intr(0x10,&reg);
+  return(((reg.r_ax&0x00FF) == 0x1B) ? 1:0);
+
+ }
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>                 VDU : Module Source Code                <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+void VDU::VDU()
+ {
+  Width  = 0;
+  Height = 0;
+  Colors = 16;
+  Delta  = 160;
+  ActPg  = 0;
+  DrwPg  = ActPg;
+  RufPg  = 1;
+  SetScreen();
+ }
+
+void VDU::SetScreen()
+ {
+  GetAdapterInf(&Vai);
+  Width  = Vai.NumChrClmns;
+  Height = Vai.NumChrRows;
+  Colors = Vai.MaxCols;
+  Delta  = Vai.NumChrClmns*2;
+  ActPg  = Vai.ActDspPage;
+  DrwPg  = ActPg;
+  RufPg  = 1;
+  PgBuf[0] = (char *)MK_FP(0xB800,Vai.BufStrtAddr);
+  for (Pages=1;Pages<Vai.MaxPages;Pages++)
+    PgBuf[Pages] = (char *)PgBuf[Pages-1]+Vai.VidRefreshBufLen;
+ }
+char *VDU::BufAddr(byte Page)
+ {
+  Page = (Page<Pages) ? Page:0;
+  return PgBuf[Page];
+ }
+
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>                Mouse : Module Source Code               <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+Mouse::Mouse()
+ {
+  xSz = ySz = 1;
+ }
+void Mouse::SetMouse(int mx,int my,word Btn,word Evt)
+ {
+  x        = mx / xSz;
+  y        = my / ySz;
+  EvtFlags = Evt;
+  BtnState = Btn;
+ }
+void Mouse::SetScale(int x_Sz,int y_Sz)
+ {
+  xSz = (x_Sz > 0) ? x_Sz:1;
+  ySz = (y_Sz > 0) ? y_Sz:1;
+ }
+
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>               ViewPort : Module Source Code             <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+
+ViewPort::ViewPort()
+ {
+  X = 0;
+  Y = 0;
+  W = Screen.Width;
+  H = Screen.Height;
+ }
+void ViewPort::Set(byte x,byte y,byte w,byte h)
+ {
+  X = x;
+  Y = y;
+  W = min(w,Screen.Width);
+  H = min(h,Screen.Height);
+ }
+
 // cui Drawing Routines
 #define Single        0
 #define HDVS          1
@@ -94,7 +348,7 @@
 #define LightRed      0x0C
 #define LightMagenta  0x0D
 #define Yellow        0x0E
-#define White           0x0F
+#define White         0x0F
 #define ModeMask        0x3F
 #define xResShift         12
 #define yResShift          6
@@ -118,266 +372,7 @@
 #define Txt132x44x16x2  0x00084B22
 #define Txt132x50x16x2  0x00084C83
 #define Txt132x60x16x2  0x00084F03
-
-struct far CurXYPos
- {
-   byte x,y;
- };
-
-struct far DspAdptInf
- {
-   byte  VidModes[3];
-   dword Reserved1;
-   byte  AvlScanLns;
-   byte  AvlChrBlks;
-   byte  MaxActChrBlks;
-   word  MiscBIOSCpbl;
-   word  Reserved2;
-   byte  SaveAreaCpbl;
-   byte  Reserved3;
- };
-
-struct far VgaInf
-  {
-    DspAdptInf *V;
-    byte       CurVidMode;
-    word       NumChrClmns;
-    word       VidRefreshBufLen;
-    word       BufStrtAddr;
-    CurXYPos   Page[8];
-    byte       CurStrtScanLn;
-    byte       CurEndScanLn;
-    byte       ActDspPage;
-    word       AdptBasePortAddr;
-    byte       Regs3B8or3D8;
-    byte       Regs3B9or3D9;
-    byte       NumChrRows;
-    word       ChrHtScanLns;
-    byte       ActDspCode;
-    byte       InActDspCode;
-    word       MaxCols;
-    byte       MaxPages;
-    byte       NumScanLns;
-    byte       PriChrBlk;
-    byte       SecChrBlk;
-    byte       MiscStateInf;
-    byte       Reserved1[3];
-    byte       AvlVidMem;
-    byte       SavePtrStateInf;
-    byte       Reserved2[13];
- };
-
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>                VDU :  Screen Information                <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-class far VDU
- {
-   public:
-     word     Delta;
-     byte     Width,Height;
-     byte     Pages,Colors;
-
-   private :
-     char     *PgBuf[8];
-
-   public :
-     VgaInf  Vai;
-
-     VDU();
-     void far SetScreen();
-     char *BufAddr(byte Page);
- };
-
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>                Mouse :  Mouse Information               <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-class far Mouse
-  {
-    private :
-      int xSz,ySz;
-
-    public  :
-      int  x,y;
-      word BtnState;
-      word EvtFlags;
-
-      Mouse();
-      void far SetMouse(int mx,int my,word Btn,word Evt);
-      void far SetScale(int x_Sz,int y_Sz);
-  };
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>             ViewPort :  Screen ViewPorts                <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-class far ViewPort
-  {
-    public :
-      byte X,Y,W,H;
-
-      ViewPort();
-      void far Set(byte x,byte y,byte w,byte h);
-  };
-
-  byte far GetAdapterInf(VgaInf *Vai);
-  word far GetMaxX();
-  word far GetMaxY();
-  byte far GetMaxPg();
-  byte far GetMaxCol();
-
-  void far GetVidAt(byte Page, byte x ,byte y, byte& Chr, byte& Attr);
-  void far SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr);
-
-  void far ModeSearch(dword Mode);
-  void far ClrPage(byte Page, byte Attr);
-  void far FillChr(byte L, byte T, byte R, byte B, byte Fill);
-  void far ChrBox(byte L, byte T, byte R, byte B, byte Fill);
-
-  void far DrawLineHz(byte xL, byte y, byte xR, byte Style);
-  void far DrawLineVt(byte x, byte yT, byte yB, byte Style);
-  void far DrawBox(byte L,byte T,byte R,byte B,byte Style);
-  void far BoxShadow(byte L,byte T,byte R,byte B);
-
-  int  far xPrintf(byte x, byte y, char *fmt,...);
-
-
-extern byte     ActPg,DrwPg,RufPg;
-extern VDU      Screen;
-extern Mouse    Ms;
-extern ViewPort Vp;
-
-#endif
-
-byte     ActPg,DrwPg,RufPg;
-VDU      Screen;
-Mouse    Ms;
-ViewPort Vp;
-
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>                Obtain Video Adapter Info                <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-byte far GetAdapterInf(VgaInf *Vai)
- {
-/*  byte rv=0;
-  word wSeg = FP_SEG(Vai);
-  word wOff = FP_OFF(Vai);
-  asm push es;
-  asm push di;
-  asm mov  ax,0x1B00;
-  asm mov  bx,0;
-  asm mov  dx,wSeg;
-  asm mov  es,dx;
-  asm mov  di,wOff;
-  asm int  0x10;
-  asm pop  di;
-  asm pop  es;
-  asm cmp  al,0x1B;
-  asm jz   RET;
-  asm mov rv,1;
-  RET : return rv;*/
-  struct REGPACK reg;
-  reg.r_ax = 0x1B00;
-  reg.r_bx = 0;
-  reg.r_es = FP_SEG(Vai);
-  reg.r_di = FP_OFF(Vai);
-  intr(0x10,&reg);
-  return(((reg.r_ax&0x00FF) == 0x1B) ? 1:0);
-
- }
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>                 VDU : Module Source Code                <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-void VDU::VDU()
- {
-  Width  = 0;
-  Height = 0;
-  Colors = 16;
-  Delta  = 160;
-  ActPg  = 0;
-  DrwPg  = ActPg;
-  RufPg  = 1;
-  SetScreen();
- }
-
-void far VDU::SetScreen()
- {
-  GetAdapterInf(&Vai);
-  Width  = Vai.NumChrClmns;
-  Height = Vai.NumChrRows;
-  Colors = Vai.MaxCols;
-  Delta  = Vai.NumChrClmns*2;
-  ActPg  = Vai.ActDspPage;
-  DrwPg  = ActPg;
-  RufPg  = 1;
-  PgBuf[0] = (char *)MK_FP(0xB800,Vai.BufStrtAddr);
-  for (Pages=1;Pages<Vai.MaxPages;Pages++)
-    PgBuf[Pages] = (char *)PgBuf[Pages-1]+Vai.VidRefreshBufLen;
-  Ms.SetScale(8,Vai.ChrHtScanLns);
- }
-char *VDU::BufAddr(byte Page)
- {
-  Page = (Page<Pages) ? Page:0;
-  return PgBuf[Page];
- }
-
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>                Mouse : Module Source Code               <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-Mouse::Mouse()
- {
-  xSz = ySz = 1;
- }
-void far Mouse::SetMouse(int mx,int my,word Btn,word Evt)
- {
-  x        = mx / xSz;
-  y        = my / ySz;
-  EvtFlags = Evt;
-  BtnState = Btn;
- }
-void far Mouse::SetScale(int x_Sz,int y_Sz)
- {
-  xSz = (x_Sz > 0) ? x_Sz:1;
-  ySz = (y_Sz > 0) ? y_Sz:1;
- }
-
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>               ViewPort : Module Source Code             <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-
-ViewPort::ViewPort()
- {
-  X = 0;
-  Y = 0;
-  W = Screen.Width;
-  H = Screen.Height;
- }
-void far ViewPort::Set(byte x,byte y,byte w,byte h)
- {
-  X = x;
-  Y = y;
-  W = min(w,Screen.Width);
-  H = min(h,Screen.Height);
- }
-
-byte far BoxS[5][8] = {
+byte BoxS[5][8] = {
                     { 0xDA,0xC2,0xBF,0xB4,0xD9,0xC1,0xC0,0xC3 },
                     { 0xD5,0xD1,0xB8,0xB5,0xBE,0xCF,0xD4,0xC6 },
 		    { 0xD6,0xD2,0xB7,0xB6,0xBD,0xD0,0xD3,0xC7 },
@@ -385,42 +380,63 @@ byte far BoxS[5][8] = {
                     { 0xC4,0xCD,0xB3,0xBA,0xC5,0xD8,0xD7,0xCE }
 		  };
 
-word far GetMaxX()
+word GetMaxX()
  {
    return(Screen.Width-1);
  }
-word far GetMaxY()
+word GetMaxY()
  {
    return(Screen.Height-1);
  }
-byte far GetMaxPg()
+byte GetMaxPg()
  {
    return(Screen.Pages);
  }
-byte far GetMaxCol()
+byte GetMaxCol()
  {
    return(Screen.Colors);
  }
 
-void far GetVidAt(byte Page, byte x,byte y, byte& Chr, byte& Attr)
+void GetVidAt(byte Page, byte x,byte y, byte& Chr, byte& Attr)
  {
+ // SetCurPos(Page,x,y);
   char *VgaBuf;
   VgaBuf = Screen.BufAddr(Page) + Screen.Delta * y + x*2;
   Chr  = *VgaBuf;
   Attr = *++VgaBuf;
+ /* asm mov ah,0x08;
+  asm mov bh,[Page]
+  asm int VidInt;
+  Attr = _AH;
+  Chr  = _AL;*/
+
+/*  reg.h.ah = 0x08;
+  reg.h.bh = Page;
+  int86(0x10,&reg,&reg);
+  Attr = reg.h.ah;
+  Chr  = reg.h.al;*/
  }
 
-void far SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr)
+void SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr)
  {
   char *VgaBuf;
   VgaBuf = Screen.BufAddr(Page) + Screen.Delta * y + x*2;
   *VgaBuf = Chr;
   *++VgaBuf = Attr;
+/*  SetCurPos(Page,x,y);
+  asm mov ah,0x09;
+  asm mov bh,[Page];
+  asm mov al,[Chr];
+  asm mov bl,[Attr];
+  asm mov cx,0x1;
+  asm int VidInt;*/
  }
 
-void far ModeSearch(dword Mode)
+void ModeSearch(dword Mode)
  {
+  VgaInf V;
   byte Flag=0x00;
+  byte MaxX,MaxY;
   byte m    = (Mode&ModeMask);
   byte mx_X = (Mode>>xResShift)&xResMask;
   byte mx_Y = (Mode>>yResShift)&yResMask;
@@ -429,20 +445,22 @@ void far ModeSearch(dword Mode)
   RufPg=1;
   DrwPg=0;
   SetVidMode(3);
-  Screen.SetScreen();
   for(;m != 3 && m < 100 && !Flag;m++)
    {
     SetVidMode(m);
-    Screen.SetScreen();
+    GetAdapterInf(&V);
+
+    MaxX = V.NumChrClmns;
+    MaxY = V.NumChrRows;
     SetPixel(0,0,15);
-    Flag = (mx_X == 80 && mx_Y == 25);
-    if (GetPixel(0,0) != 15) Flag = 1;
-    Flag = (Flag && (Screen.Width==mx_X && Screen.Height==mx_Y));
+    Flag = (mx_X == 80 && mx_Y == 25) ? 1:(GetPixel(0,0)!=15);
+    Flag = (Flag && (MaxX==mx_X && MaxY==mx_Y));
    }
   if (!Flag) SetVidMode(3);
   Screen.SetScreen();
+  Ms.SetScale(8,V.ChrHtScanLns);
  }
-void far ClrPage(byte Page,byte Attr)
+void ClrPage(byte Page,byte Attr)
  {
   char Pattern[2];
   byte X,Y;
@@ -459,7 +477,7 @@ void far ClrPage(byte Page,byte Attr)
       SetVidAt(Page,x,y,' ',Attr);*/
  }
 
-bool far BoxSym(byte X,byte Y,byte& R,byte& C)
+bool BoxSym(byte X,byte Y,byte& R,byte& C)
  {
   bool RetVal = false;
   GetVidAt(DrwPg,X,Y,VidChr,VidAtr);
@@ -474,7 +492,7 @@ bool far BoxSym(byte X,byte Y,byte& R,byte& C)
   return(RetVal);
  }
 
-void far BoxCorner(byte X,byte Y,byte R,byte C)
+void BoxCorner(byte X,byte Y,byte R,byte C)
  {
   byte NewR,NewC,Va,Vb;
   NewR = R;
@@ -518,7 +536,7 @@ void far BoxCorner(byte X,byte Y,byte R,byte C)
     }
   SetVidAt(DrwPg,X,Y,BoxS[NewR][NewC],TxtAttr);
  }
-void far DrawLineHz(byte xL, byte y, byte xR, byte Style)
+void DrawLineHz(byte xL, byte y, byte xR, byte Style)
  {
   byte NewR,NewC,R,C;
   byte Cx,Rx,V,Vc,x;
@@ -567,7 +585,7 @@ void far DrawLineHz(byte xL, byte y, byte xR, byte Style)
     SetVidAt(DrwPg,x,y,BoxS[NewR][NewC],TxtAttr);
    }
  }
-void far DrawLineVt(byte x, byte yT, byte yB, byte Style)
+void DrawLineVt(byte x, byte yT, byte yB, byte Style)
  {
   byte NewR,NewC,R,C;
   byte Cx,Rx,Vc,y;
@@ -617,7 +635,7 @@ void far DrawLineVt(byte x, byte yT, byte yB, byte Style)
    }
  }
 
-void far DrawBox(byte L,byte T,byte R,byte B,byte Style)
+void DrawBox(byte L,byte T,byte R,byte B,byte Style)
  {
 //	  if (L>R) Swap(&L,&R);
 //	  if (T>B) Swap(&T,&B);
@@ -630,7 +648,7 @@ void far DrawBox(byte L,byte T,byte R,byte B,byte Style)
    DrawLineVt(R,T,B,(Style&0x02)>>1);
    DrawLineVt(L,T,B,(Style&0x02)>>1);
  }
-void far BoxShadow(byte L,byte T,byte R,byte B)
+void BoxShadow(byte L,byte T,byte R,byte B)
  {
   byte SaveAttr = TxtAttr;
   byte X,Y;
@@ -648,7 +666,7 @@ void far BoxShadow(byte L,byte T,byte R,byte B)
   SetTexAttr(SaveAttr);
  }
 
-void far FillChr(byte X,byte Y,byte W,byte H,byte FillPtn)
+void FillChr(byte X,byte Y,byte W,byte H,byte FillPtn)
  {
    word DstOff = (Screen.Width*Y+X)*2;
    char Pattern[2];
@@ -659,7 +677,7 @@ void far FillChr(byte X,byte Y,byte W,byte H,byte FillPtn)
     for (X=0;X<W;X++)
       memcpy(Screen.BufAddr(DrwPg)+DstOff+X*2,Pattern,2);
  }
-void far ChrBox(byte X,byte Y,byte W,byte H,byte FillPtn)
+void ChrBox(byte X,byte Y,byte W,byte H,byte FillPtn)
  {
    word DstOff = (Screen.Width*Y+X)*2;
    char Pattern[2];
@@ -678,7 +696,7 @@ void far ChrBox(byte X,byte Y,byte W,byte H,byte FillPtn)
     }
  }
 
-int far xPrintf(byte x,byte y,char *fmt, ...)
+int xPrintf(byte x,byte y,char *fmt, ...)
 {
   char buf[255];
   va_list argptr;

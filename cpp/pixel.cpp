@@ -238,9 +238,8 @@ void ModeSearch(dword Mode)
 
   if (Mode&Graphics)
    {
-    for(m=(int)(Mode&ModeMask);m < 150 && !Flag;m++)
+    for(m=(int)(Mode&ModeMask);m < 100 && !Flag;m++)
      {
-      SetVidMode(3);
       SetVidMode(m);
       GetVidState(&V);
       MaxX  = V.NumChrClmns*8;
@@ -885,7 +884,7 @@ int Status(char *fmt,...)
   va_end(argptr);
   len = strlen(buf);
 
-  TextSize(1,1);
+  TextSize(1,2);
 
   int x=4*Width("W");
   int y=yMax()-22;

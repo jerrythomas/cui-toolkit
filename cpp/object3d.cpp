@@ -156,11 +156,11 @@ double Bez(int n,float u,int k)
 
 void Init3D()
  {
-   H = Height()+12;
-   Wd = yMax()-3*(H+2);
-   Map3D.Cavalier(Wd/2-35,(yMax()+3*H)/2,45);
-   mn3D_z = -300;
-   mx3D_z =  300;
+   H = 30;
+   Wd = yMax()-66;
+   Map3D.Cavalier(Wd/2,(yMax()+H)/2,45);
+   mn3D_z = -400;
+   mx3D_z =  400;
  }
 
 byte Color3D(byte Color,Vector V)
@@ -340,9 +340,9 @@ Vector Cursor3D()
 void Draw3DAxis()
  {
   Vector Org(0,0,0);
-  Vector Z_Ax(0,0,250);
-  Vector X_Ax(250,0,0);
-  Vector Y_Ax(0,250,0);
+  Vector Z_Ax(0,0,300);
+  Vector X_Ax(300,0,0);
+  Vector Y_Ax(0,300,0);
 
   ViewPort(3,2*H+5,Wd-3,yMax()-H-5);
   Line3D(Org,Z_Ax,Magenta);
@@ -389,7 +389,7 @@ void JerryThomas()
   Panel(Wd+2,t,xMax(),b,Gray+22,Gray+17);
   Justify(CenterText,CenterText);
 
-  TextSize(1,1);
+  TextSize(1,3);
   SetColor(0);
   t+=W+3;
   Box(Wd+W+3,t,xMax()-W-3,t+3*H-2*W,Green+10);
@@ -411,7 +411,7 @@ void JerryThomas()
   gPrintf(Wd+3*W,t+8*H-15,"X-Resolution         : 1024 Pixels");
   gPrintf(Wd+3*W,t+9*H-15,"Y-Resolution         : 768  Pixels");
   gPrintf(Wd+3*W,t+10*H-15,"Colour Depth (8 Bit) : 256 Colours");
-  TextSize(1,1);
+  TextSize(1,2);
 
   Panel(Wd+2,H+2,xMax(),6*H+12,Gray+22,Gray+17);
   Justify(CenterText,CenterText);
@@ -459,7 +459,7 @@ void Screen()
 
   SetColor(Red+7);
   Justify(CenterText,CenterText);
-  TextSize(1,1);
+  TextSize(1,2);
   gPrintf(xMax()/2,H/2,"Three Dimensional Graphics");
 
   M.DrawMenu();
@@ -1014,30 +1014,29 @@ void ObjectIn3D::DisplayObject()
      }
     if (swObjectIn3D&InnerCurves)
      {
-
       for (i=0,Offset=0;i<MaxM;i++,Offset+=mOff)
        for (v=0.0; v < 1.0+Dv ;v += Dv)
-   	{
+	{
 	 for(j=0;j<MaxN;j++)
 	  {
 	   MoveTo3D(Surface(0.0,v,Offset,j*nOff));
 	   for (u=Du;u < 1.0+Du;u+=Du)
 	    LineTo3D(Surface(u,v,Offset,j*nOff),cSurface);//Green);
 	   }
-     	}
+	}
      }
     if (swObjectIn3D&OuterCurves)
      {
       for(j=0;j<MaxN;j++)
        for (u=0.0;u< 1.0+Du;u +=Du)
-       	{
-   	 for (i=0,Offset=0;i<MaxM;i++,Offset+=mOff)
-   	  {
-   	   MoveTo3D(Surface(u,0.0,Offset,j*nOff));
-   	   for (v=Dv;v < 1+Dv;v+=Dv)
-   	    LineTo3D(Surface(u,v,Offset,j*nOff),cSurface);//Green);
-   	  }
-   	}
+	{
+	 for (i=0,Offset=0;i<MaxM;i++,Offset+=mOff)
+	  {
+	   MoveTo3D(Surface(u,0.0,Offset,j*nOff));
+	   for (v=Dv;v < 1+Dv;v+=Dv)
+	    LineTo3D(Surface(u,v,Offset,j*nOff),cSurface);//Green);
+	  }
+	}
      }
    }
  }
@@ -1150,8 +1149,8 @@ main()
 	     Pwn3D(ChessPawnIn3D),
 	     Vas3D(VaseIn3D);
 
-  //Bmp CapS;
-  ModeSearch(VgaCo800x600x256);
+  Bmp CapS;
+  ModeSearch(VgaCo1024x768x256);
   Screen();
 
   Tr.DefineMenu(MenuVt,Wd+2,6*H+14,xMax(),yMax()-8*H+2,11,GrayScale);
