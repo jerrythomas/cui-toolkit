@@ -43,7 +43,7 @@ class Caption
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class Tool:public Event
+class Tool //:public Event
  {
    protected :
      byte    X,Y,

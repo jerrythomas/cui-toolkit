@@ -445,9 +445,9 @@ void ScrX::SetEffect(word Eff)
 void ScrX::Copy(byte DstPg,byte SrcPg,byte x,byte y,byte w,byte h)
  {
    word OffSet = (Screen.Width*y+x)*2;
-   word Incr   = Screen.Width*2;
-   xPrintf(20,20,"%d %d",Screen.Width,Screen.Delta);
-   for(y=0;y<h;y++,OffSet+=Incr)
+//   word Incr   = Screen.Width*2;
+  // xPrintf(20,20,"%d %d",Screen.Width,Screen.Delta);
+   for(y=0;y<h;y++,OffSet+=Screen.Delta)
     {
      memcpy(Screen.BufAddr(DstPg)+OffSet,Screen.BufAddr(SrcPg)+OffSet,w*2);
      GetKey();
@@ -455,8 +455,8 @@ void ScrX::Copy(byte DstPg,byte SrcPg,byte x,byte y,byte w,byte h)
  }
 void ScrX::xCopy(byte DstPg,byte SrcPg,word DstOff,word SrcOff,byte w,byte h)
  {
-   word Incr   = Screen.Width*2;
-   for(byte y=0;y<h;y++,DstOff+=Incr,SrcOff+=Incr)
+//   word Incr   = Screen.Width*2;
+   for(byte y=0;y<h;y++,DstOff+=Screen.Delta,SrcOff+=Screen.Delta)
      memcpy(Screen.BufAddr(DstPg)+DstOff,Screen.BufAddr(SrcPg)+SrcOff,w*2);
  }
 
@@ -473,8 +473,8 @@ void ScrX::Capture(byte x,byte y,byte w,byte h)
    BufSize = W*H*2;
    Buffer  = new char[BufSize];
    w = W*2;
-   word Offset = (Screen.Width*y+x)*2;
-   for (y=0;y<H;y++,Offset+=Screen.Width*2)
+   word Offset = Screen.Delta*y+x*2;
+   for (y=0;y<H;y++,Offset+=Screen.Delta)
      memcpy(Buffer+y*w,(Screen.BufAddr(DrwPg)+Offset),w);
  }
 void ScrX::Restore()
@@ -483,8 +483,8 @@ void ScrX::Restore()
    {
      byte w=W*2;
      byte y;
-     word Offset = (Screen.Width*Y+X)*2;
-     for (y=0;y<H;y++,Offset+=Screen.Width*2)
+     word Offset = Screen.Delta*Y+X*2;
+     for (y=0;y<H;y++,Offset+=Screen.Delta)
        memcpy(Screen.BufAddr(DrwPg)+Offset,Buffer+y*w,w);
    }
  }
@@ -496,7 +496,7 @@ void ScrX::Restore(byte x,byte y)
      X = x;
      Y = y;
      word Offset = (Screen.Width*Y+X)*2;
-     for (y=0;y<H;y++,Offset+=Screen.Width*2)
+     for (y=0;y<H;y++,Offset+=Screen.Delta)
        memcpy(Screen.BufAddr(DrwPg)+Offset,Buffer+y*w,w);
    }
  }
