@@ -269,7 +269,7 @@ struct Pad
    word    swItem;      // Item Status Word
    word    PadID;       // Pad Identification code
    byte    Hot;         // Position of Hot Character
-   Caption *Cap;
+   Caption *Cap;        // Caption
    App     PadApp;      // App to be taken on selection
    char    *Msg;        // Message string for guidance
    Menu    *SubMenu;    // Ptr to Sub-Menu
@@ -510,8 +510,8 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
       Restore();
       if (swScr&NoShadow)
        {
-         w--;h--;
-         swScr^=NoShadow;
+	 w--;h--;
+	 swScr^=NoShadow;
        }
       Capture(x,y,w,h);
     }
@@ -568,13 +568,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w  = W*n/N;
        h  = H*n/N;
        if (h>0 && w>0)
-        {
-         SrcOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
-         DstOff = (Screen.Width*Y+X)*2;
-         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	{
+	 SrcOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
+	 DstOff = (Screen.Width*Y+X)*2;
+	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
 	 if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
-         delay(10);
-        }
+	 delay(10);
+	}
       }
   else if (Style == SlideLtDn)
      for(n=1;n<=N;n++)
@@ -582,13 +582,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w      = W*n/N;
        h      = H*n/N;
        if (h>0 && w>0)
-        {
-         SrcOff = (Screen.Width*(Y+H-h)+X)*2;
+	{
+	 SrcOff = (Screen.Width*(Y+H-h)+X)*2;
 	 DstOff = (Screen.Width*Y+X+W-w)*2;
-         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-         if (swScr&EffShadow) BoxShadow(X+W-w,Y,X+W-1,Y+h-1);
-         delay(10);
-        }
+	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	 if (swScr&EffShadow) BoxShadow(X+W-w,Y,X+W-1,Y+h-1);
+	 delay(10);
+	}
       }
   else if (Style == SlideRtUp)
      for(n=1;n<=N;n++)
@@ -597,12 +597,12 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        h      = H*n/N;
        if (h>0 && w>0)
 	{
-         SrcOff = (Screen.Width*Y+X+W-w)*2;
-         DstOff = (Screen.Width*(Y+H-h)+X)*2;
-         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	 SrcOff = (Screen.Width*Y+X+W-w)*2;
+	 DstOff = (Screen.Width*(Y+H-h)+X)*2;
+	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
 	 if (swScr&EffShadow) BoxShadow(X,Y+H-h,X+w-1,Y+H-1);
-         delay(10);
-        }
+	 delay(10);
+	}
       }
   else if (Style == SlideLtUp)
      for(n=1;n<=N;n++)
@@ -610,13 +610,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w      = W*n/N;
        h      = H*n/N;
        if (h>0 && w>0)
-        {
-          SrcOff = (Screen.Width*Y+X)*2;
-          DstOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
-          xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-          if (swScr&EffShadow) BoxShadow(X+W-w,Y+H-h,X+W-1,Y+H-1);
-          delay(10);
-        }
+	{
+	  SrcOff = (Screen.Width*Y+X)*2;
+	  DstOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
+	  xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	  if (swScr&EffShadow) BoxShadow(X+W-w,Y+H-h,X+W-1,Y+H-1);
+	  delay(10);
+	}
       }
   else
     Copy(DrwPg,RufPg,X,Y,W,H);
@@ -681,14 +681,14 @@ void ScrX::UndoEffect()
        w  = eW*n/N;
        h  = eH*n/N;
        if (h>0 && w>0)
-        {
+	{
 	 SrcOff = (Screen.Width*(Y+eH-h)+X+eW-w)*2;
-         DstOff = (Screen.Width*Y+X)*2;
-         Restore();
-         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-         if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
-         delay(10);
-        }
+	 DstOff = (Screen.Width*Y+X)*2;
+	 Restore();
+	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	 if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
+	 delay(10);
+	}
       }
   else if (Style == SlideLtDn)
      for(n=N;n>0;n--)
@@ -696,14 +696,14 @@ void ScrX::UndoEffect()
        w      = eW*n/N;
        h      = eH*n/N;
        if (h>0 && w>0)
-        {
-         SrcOff = (Screen.Width*(Y+eH-h)+X)*2;
-         DstOff = (Screen.Width*Y+X+eW-w)*2;
-         Restore();
-         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-         if (swScr&EffShadow) BoxShadow(X+eW-w,Y,X+eW-1,Y+h-1);
+	{
+	 SrcOff = (Screen.Width*(Y+eH-h)+X)*2;
+	 DstOff = (Screen.Width*Y+X+eW-w)*2;
+	 Restore();
+	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	 if (swScr&EffShadow) BoxShadow(X+eW-w,Y,X+eW-1,Y+h-1);
 	 delay(10);
-        }
+	}
       }
   else if (Style == SlideRtUp)
      for(n=N;n>0;n--)
@@ -711,14 +711,14 @@ void ScrX::UndoEffect()
        w      = eW*n/N;
        h      = eH*n/N;
        if (h>0 && w>0)
-        {
-         SrcOff = (Screen.Width*Y+X+eW-w)*2;
-         DstOff = (Screen.Width*(Y+eH-h)+X)*2;
-         Restore();
-         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	{
+	 SrcOff = (Screen.Width*Y+X+eW-w)*2;
+	 DstOff = (Screen.Width*(Y+eH-h)+X)*2;
+	 Restore();
+	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
 	 if (swScr&EffShadow) BoxShadow(X,Y+eH-h,X+w-1,Y+eH-1);
-         delay(10);
-        }
+	 delay(10);
+	}
       }
   else if (Style == SlideLtUp)
      for(n=N;n>0;n--)
@@ -726,14 +726,14 @@ void ScrX::UndoEffect()
        w      = eW*n/N;
        h      = eH*n/N;
        if (h>0 && w>0)
-        {
-          SrcOff = (Screen.Width*Y+X)*2;
+	{
+	  SrcOff = (Screen.Width*Y+X)*2;
 	  DstOff = (Screen.Width*(Y+eH-h)+X+eW-w)*2;
-          Restore();
-          xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-          if (swScr&EffShadow) BoxShadow(X+eW-w,Y+eH-h,X+eW-1,Y+eH-1);
-          delay(10);
-        }
+	  Restore();
+	  xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+	  if (swScr&EffShadow) BoxShadow(X+eW-w,Y+eH-h,X+eW-1,Y+eH-1);
+	  delay(10);
+	}
       }
     Restore();
  }

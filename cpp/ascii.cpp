@@ -1,7 +1,9 @@
-#include <vdu.h>
+#include <cuibase.h>
 #include <kbd.h>
+#include <stdio.h>
 main()
  {
+   //ModeSearch(Txt80x25x16x8);
    Screen.Width =80;
    Screen.Height=25;
    for (int j=0;j<25;j++)
@@ -13,11 +15,12 @@ main()
 
 
    TxtAttr = SetTxtCol(Green,Yellow);
-   FillChr(5,1,75,1,Blank);
+
+   FillChr(5,1,68,1,Blank);
    xPrintf(30,1,"Ascii Chart");
    TxtAttr = SetTxtCol(LightGray,Blue);
-   FillChr(5,2,75,23,Blank);
-   DrawBox(5,2,75,23,HDVS);
+   FillChr(5,2,68,22,Blank);
+   DrawBox(5,2,72,23,HDVS);
 
    DrawBox(7,3,13,22,Single);
    DrawBox(13,3,18,22,Single);

@@ -21,14 +21,13 @@
 #define max(v1,v2) ((v1) > (v2)) ? (v1):(v2)
 #define min(v1,v2) ((v1) < (v2)) ? (v1):(v2)
 
-// cui Drawing Routines
+// Box Style Codes
 #define Single        0
 #define HDVS          1
 #define HSVD          2
 #define Double        3
 
 // Arrow Symbols
-
 #define uArrow        0x18
 #define dArrow        0x19
 #define rArrow        0x1A
@@ -78,6 +77,7 @@
 #define Epsilon       0xEE
 #define MinMax        0x12
 
+//Colour Codes : Dark
 #define Black         0x00
 #define Blue          0x01
 #define Green         0x02
@@ -86,7 +86,7 @@
 #define Magenta       0x05
 #define Brown         0x06
 #define LightGray     0x07
-
+//Colour Codes : Light
 #define DarkGray      0x08
 #define LightBlue     0x09
 #define LightGreen    0x0A
@@ -94,13 +94,16 @@
 #define LightRed      0x0C
 #define LightMagenta  0x0D
 #define Yellow        0x0E
-#define White           0x0F
+#define White         0x0F
+
+//Mode Information Extractors
 #define ModeMask        0x3F
 #define xResShift         12
 #define yResShift          6
 #define xResMask        0xFF
 #define yResMask        0x3F
 
+//Mode Constants
 #define Txt80x25x16x8   0x00050643
 #define Txt80x30x16x8   0x00050792
 #define Txt80x35x16x8   0x000508C3
@@ -173,21 +176,21 @@ struct far VgaInf
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class far VDU
+class VDU
  {
    public:
-     word     Delta;
-     byte     Width,Height;
-     byte     Pages,Colors;
+     word    Delta;
+     byte    Width,Height;
+     byte    Pages,Colors;
 
    private :
-     char     *PgBuf[8];
+     char    *PgBuf[8];
 
    public :
      VgaInf  Vai;
 
      VDU();
-     void far SetScreen();
+     void SetScreen();
      char *BufAddr(byte Page);
  };
 
@@ -197,7 +200,7 @@ class far VDU
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class far Mouse
+class Mouse
   {
     private :
       int xSz,ySz;
@@ -208,8 +211,8 @@ class far Mouse
       word EvtFlags;
 
       Mouse();
-      void far SetMouse(int mx,int my,word Btn,word Evt);
-      void far SetScale(int x_Sz,int y_Sz);
+      void SetMouse(int mx,int my,word Btn,word Evt);
+      void SetScale(int x_Sz,int y_Sz);
   };
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 // <<>>                                                         <<>>
@@ -217,13 +220,13 @@ class far Mouse
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class far ViewPort
+class ViewPort
   {
     public :
       byte X,Y,W,H;
 
       ViewPort();
-      void far Set(byte x,byte y,byte w,byte h);
+      void Set(byte x,byte y,byte w,byte h);
   };
 
   byte far GetAdapterInf(VgaInf *Vai);
@@ -248,10 +251,10 @@ class far ViewPort
   int  far xPrintf(byte x, byte y, char *fmt,...);
 
 
-extern byte     ActPg,DrwPg,RufPg;
-extern VDU      Screen;
-extern Mouse    Ms;
-extern ViewPort Vp;
+extern byte      ActPg,DrwPg,RufPg;
+extern VDU       Screen;
+extern Mouse     Ms;
+extern ViewPort  Vp;
 
 #endif
 

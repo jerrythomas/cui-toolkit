@@ -183,18 +183,18 @@ void Menu::PadPos(int m,int *xL,int *Y,int *xR)
    {
     *Y  = t+Ht;
     *xL = l;
-    *xR = Width(M[0].Prompt)+*xL+4*Wd;
+    *xR = Width(M[0].Prompt)+*xL; //+4*Wd;
     for (int i=1;i<=m;i++)
      {
-      *xL = *xR + Width("W")-2*Wd;
-      *xR = Width(M[i].Prompt)+*xL+4*Wd;
+      *xL = *xR + Width("W");//-2*Wd;
+      *xR = Width(M[i].Prompt)+*xL;//+4*Wd;
      }
    }
  }
 
 void Menu::DefineMenu(word Type,int L,int T,int R,int B,byte MaxPad,Scheme S)
  {
-  TextSize(1,2);
+  TextSize(1,1);
   swMenu = Type;
   l = L;
   t = T;
@@ -246,9 +246,9 @@ void Menu::SetPadHelp(byte Which,char *Str)
 void Menu::DrawPad(int x,int y,byte i,byte Txt,byte TxtHi)
  {
   SetColor(Txt);
-  gPrintf(x+Wd,y+4,M[i].Prompt);
+  gPrintf(x,y+4,M[i].Prompt);         //x+wd
   SetColor(TxtHi);
-  gPrintf(x+Wd+Width("W")*M[i].Pos,y+4,"%c",M[i].Prompt[M[i].Pos]);
+  gPrintf(x+Width("W")*M[i].Pos,y+4,"%c",M[i].Prompt[M[i].Pos]);//x+wd
  }
 void Menu::DrawMenu()
  {
@@ -268,11 +268,11 @@ void Menu::DrawMenu()
   for (int i=0;i<Max;i++)
    {
     if (!(swMenu&MenuVt))
-     xR = Width(M[i].Prompt)+x+4*Wd;
+     xR = Width(M[i].Prompt)+x; //+2*Wd;//4*Wd;
     if (i==CurP)
      {
       SetColor(Sch.Hot);
-      Box(x+Wd,y,xR-Wd,y+Height()+7,Sch.Hot);
+      Box(x+Wd,y,xR+Wd,y+Height()+7,Sch.Hot); //,xr-wd
       DrawPad(x+W,y,i,Sch.Xec,Sch.XecHi);
      }
     else if (M[i].swPad&LockedPad)
@@ -296,7 +296,7 @@ void Menu::DrawMenu()
     if (swMenu&MenuVt)
      y += Height()+8;
     else
-     x = xR + Width("W")-2*Wd;
+     x = xR + Width("W"); //-2*Wd;
    }
  }
 
@@ -360,13 +360,13 @@ byte Menu::MenuKeys()
       int xL,y,xR;
       PadPos(CurP,&xL,&y,&xR);
       SetColor(Sch.Nrm+5);
-      Box(xL+Wd,y,xR-Wd,y+Height()+7,Sch.Nrm+5);
+      Box(xL+Wd,y,xR+Wd,y+Height()+7,Sch.Nrm+5); // xr-wd
       DrawPad(xL+W,y,CurP,Sch.Txt,Sch.TxtHi);
       CurP = NewP;
       //DrawMenu();
       PadPos(CurP,&xL,&y,&xR);
       SetColor(Sch.Hot);
-      Box(xL+Wd,y,xR-Wd,y+Height()+7,Sch.Hot);
+      Box(xL+Wd,y,xR+Wd,y+Height()+7,Sch.Hot); //xr-wd
       DrawPad(xL+W,y,CurP,Sch.Xec,Sch.XecHi);
       Status(M[CurP].Hlp);
      }
@@ -429,7 +429,7 @@ main()
    Menu M;
    SetVidMode(Vga1024x768x256);
    InitScheme();
-   TextSize(1,2);
+   TextSize(1,1);
    M.DefineMenu(MenuHz,20,100,300,128,4,Classic);
     M.DefinePad("&Translate",ActivePad,NoApp);
     M.DefinePad("&Rotate",ActivePad,NoApp);

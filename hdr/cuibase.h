@@ -137,7 +137,7 @@ struct far DspAdptInf
    byte  Reserved3;
  };
 
-struct VgaInf
+struct far VgaInf
   {
     DspAdptInf *V;
     byte       CurVidMode;

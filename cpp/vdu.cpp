@@ -1,21 +1,21 @@
 #ifndef __VDU_H
 #define __VDU_H
 
-#include <Kbd.h>
+//#include <Kbd.h>
 #include <math.h>
 #include <stdarg.h>
 #include <string.h>
 
 #define VidInt 0x10
 
-#define max(v1,v2) ((v1) > (v2)) ? (v1):(v2)
-#define min(v1,v2) ((v1) < (v2)) ? (v1):(v2)
+//#define max(v1,v2) ((v1) > (v2)) ? (v1):(v2)
+//#define min(v1,v2) ((v1) < (v2)) ? (v1):(v2)
 
 #define SetTexAttr(Attr) TxtAttr = (Attr)
 #define SetDrawPg(Pg) DrwPg = (Pg)
 
 
-
+// Cursor Styles
 #define Cursor01      0x0F0F
 #define Cursor02      0x0F0E
 #define Cursor03      0x0F0D
@@ -51,6 +51,7 @@
 
 #define NullCursor    0x0F00
 
+//Font Styles
 #define VgaFnt8x14      0x01
 #define VgaFnt8x8       0x02
 #define VgaFnt8x16      0x04

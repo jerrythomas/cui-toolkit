@@ -43,7 +43,7 @@ class Caption
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class Tool:public Event
+class Tool //:public Event
  {
    protected :
      byte    X,Y,
@@ -282,6 +282,7 @@ void Caption::Parse(byte x,byte y,byte coTxt,byte coTxtHi)
 
 void Tool::SetEventID(word ID)
  {
+   word EventID; //temporary
    EventID  = ID&0x00FF;
    EventID |= (ID&0x00FF <  EventMenu ) ? HndlMenu :0;
    EventID |= (ID&0x00FF <= EventFrame) ? HndlEvent:0;

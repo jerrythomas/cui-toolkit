@@ -84,7 +84,6 @@ word GetKey()
   asm mov ah,0x10;
   asm int KbdInt;
   asm mov [[rvKey]],ax;
-
   return KeyMap(rvKey);
  }
 word KeyHit()

@@ -238,8 +238,9 @@ void ModeSearch(dword Mode)
 
   if (Mode&Graphics)
    {
-    for(m=(int)(Mode&ModeMask);m < 100 && !Flag;m++)
+    for(m=(int)(Mode&ModeMask);m < 150 && !Flag;m++)
      {
+      SetVidMode(3);
       SetVidMode(m);
       GetVidState(&V);
       MaxX  = V.NumChrClmns*8;
@@ -884,12 +885,12 @@ int Status(char *fmt,...)
   va_end(argptr);
   len = strlen(buf);
 
-  TextSize(1,2);
+  TextSize(1,1);
 
   int x=4*Width("W");
-  int y=yMax()-22;
+  int y=yMax()-Height()-4;
   SetColor(Red+7);
-  Box(3,yMax()-27,3+87*Width("w"),yMax()-3,Gray+22);
+  Box(3,y-4,3+87*Width("w"),yMax()-2,Gray+22);
   //Panel(0,yMax()-30,xMax(),yMax(),Gray+17,Gray+12);
   for (int i=0;i<len;i++,x+=Width("W"))
     ChBmpOut(x,y,buf[i]);
