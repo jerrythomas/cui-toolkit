@@ -1,11 +1,21 @@
 #ifndef __VDU_H
 #define __VDU_H
 
-#include <BaseInc.H>
+#include <Kbd.h>
+#include <math.h>
+#include <stdarg.h>
+#include <string.h>
 
 #define VidInt 0x10
 
-// Cursor Styles
+#define max(v1,v2) ((v1) > (v2)) ? (v1):(v2)
+#define min(v1,v2) ((v1) < (v2)) ? (v1):(v2)
+
+#define SetTexAttr(Attr) TxtAttr = (Attr)
+#define SetDrawPg(Pg) DrwPg = (Pg)
+
+
+
 #define Cursor01      0x0F0F
 #define Cursor02      0x0F0E
 #define Cursor03      0x0F0D
@@ -41,7 +51,6 @@
 
 #define NullCursor    0x0F00
 
-//Font Styles
 #define VgaFnt8x14      0x01
 #define VgaFnt8x8       0x02
 #define VgaFnt8x16      0x04
@@ -61,10 +70,7 @@
 #define Fnt25Rows       0x01
 #define Fnt43Rows       0x01
 
-#define SetTexAttr(Attr) TxtAttr = (Attr)
-#define SetDrawPg(Pg) DrwPg = (Pg)
-
-struct VGAConfig
+struct far VGAConfig
 	 {
 	   byte DspType;
 	   word VGAMem;
@@ -72,46 +78,46 @@ struct VGAConfig
 	   byte SwitchSettings;
 	 };
 
- void SetColour(byte Colour);
- byte SetTxtCol(byte AttrB,byte AttrF);
- void SetShadAttr(byte Attr);
- void SetFillStyle(byte Style,byte Colour);
+ void far SetColour(byte Colour);
+ byte     SetTxtCol(byte AttrB,byte AttrF);
+ void far SetShadAttr(byte Attr);
+ void far SetFillStyle(byte Style,byte Colour);
 
- void SetPixel(int x,int y,byte col);
- byte GetPixel(int x,int y);
+ void far SetPixel(int x,int y,byte col);
+ byte     GetPixel(int x,int y);
 
- void SetVidMode(byte vid_Mode);
- void SetCurType(word Style);
- void SetCurPos(byte Page, byte x, byte y);
- word GetCurPos(byte Page, byte& x, byte& y);
- byte GetX(byte Page);
- byte GetY(byte Page);
- void SetActivePage(byte Page);
+ void far SetVidMode(byte vid_Mode);
+ void far SetCurType(word Style);
+ void far SetCurPos(byte Page, byte x, byte y);
+ word far GetCurPos(byte Page, byte& x, byte& y);
+ byte     GetX(byte Page);
+ byte     GetY(byte Page);
+ void far SetActivePage(byte Page);
 
- void ScrollWinUp(byte L, byte T, byte R, byte B, byte NumOfLns, byte Attr);
- void ScrollWinDn(byte L, byte T, byte R, byte B, byte NumOfLns, byte Attr);
+ void far ScrollWinUp(byte L, byte T, byte R, byte B, byte NumOfLns, byte Attr);
+ void far ScrollWinDn(byte L, byte T, byte R, byte B, byte NumOfLns, byte Attr);
 
- void SetChrAtCur(byte Page, byte Chr, word Rept);
- void SetBackGround(byte Col);
+ void far SetChrAtCur(byte Page, byte Chr, word Rept);
+ void far SetBackGround(byte Col);
 
- void TypeChrAtCur(byte Page, byte Chr);
+ void far TypeChrAtCur(byte Page, byte Chr);
 
- void GetVidMode(byte& NumCols, byte& VidMode, byte& ActPage);
- void SetPalletteReg(byte Colour,byte RegCod);
- void SetBorderCol(byte Colour);
- void TglBlink(byte OnOff);
+ void far GetVidMode(byte& NumCols, byte& VidMode, byte& ActPage);
+ void far SetPalletteReg(byte Colour,byte RegCod);
+ void far SetBorderCol(byte Colour);
+ void far TglBlink(byte OnOff);
 
- byte GetPalletteReg(byte RegCod);
- byte GetBorderCol();
- byte SetRegRGB(word RegCod,byte rgRed,byte rgGrn,byte rgBlu);
- void LoadRomFont(byte Font,byte Blk);
- void SetInt43H(byte Font,byte Rows);
+ byte     GetPalletteReg(byte RegCod);
+ byte     GetBorderCol();
+ byte     SetRegRGB(word RegCod,byte rgRed,byte rgGrn,byte rgBlu);
+ void far LoadRomFont(byte Font,byte Blk);
+ void far SetInt43H(byte Font,byte Rows);
 
- void GetVGACfg(VGAConfig& VGACfg);
- byte SetScanLns(byte ScanLnCode);
+ void far GetVGACfg(VGAConfig& VGACfg);
+ byte     SetScanLns(byte ScanLnCode);
 
- extern byte TxtAttr;
+ extern byte     TxtAttr;
  extern byte VidChr,VidAtr;
- extern byte ForeCol,FillStyle,FillColor;
+ extern byte     ForeCol,FillStyle,FillColor;
 
 #endif

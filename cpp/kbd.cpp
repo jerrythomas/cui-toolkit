@@ -1,4 +1,7 @@
 #include <Kbd.h>
+
+#include <string.h>
+
 #define KbdInt 0x16
 
 word KeyMap(word Key)
@@ -13,7 +16,7 @@ word KeyMap(word Key)
    else if (KbdFlagWord()&0x000C)
     {
       if (KeyNo == 0x39 && KeyAscii == 0x20)
-	 Key |= (KbdFlagWord()&AnyAltKeyDn) ? 0x8000:0x4000;
+         Key |= (KbdFlagWord()&AnyAltKeyDn) ? 0x8000:0x4000;
     }
    else
     {
@@ -23,9 +26,9 @@ word KeyMap(word Key)
        Key = KeyAscii;
      else if (KeyNo > 0x46 && KeyNo < 0x54)
        if ((KeyAscii >= '0' && KeyAscii <= '9')||KeyAscii=='.')
-	  Key = KeyAscii;
+          Key = KeyAscii;
        else if (KbdFlagWord()&AnyShftKyDn)
-	  Key |= 0x07;
+          Key |= 0x07;
     }
    return Key;
  }
@@ -147,33 +150,33 @@ word Alt(char Alph)
  {
   switch(UpCase(Alph))
    {
-    case 'A' : return(Alt_A);
-	 case 'B' : return(Alt_B);
-	 case 'C' : return(Alt_C);
-	 case 'D' : return(Alt_D);
-	 case 'E' : return(Alt_E);
-    case 'F' : return(Alt_F);
-	 case 'G' : return(Alt_G);
-	 case 'H' : return(Alt_H);
-	 case 'I' : return(Alt_I);
-	 case 'J' : return(Alt_J);
-	 case 'K' : return(Alt_K);
-	 case 'L' : return(Alt_L);
-	 case 'M' : return(Alt_M);
-	 case 'N' : return(Alt_N);
-	 case 'O' : return(Alt_O);
-	 case 'P' : return(Alt_P);
-	 case 'Q' : return(Alt_Q);
-	 case 'R' : return(Alt_R);
-	 case 'S' : return(Alt_S);
-	 case 'T' : return(Alt_T);
-	 case 'U' : return(Alt_U);
-	 case 'V' : return(Alt_V);
-	 case 'W' : return(Alt_W);
-	 case 'X' : return(Alt_X);
-	 case 'Y' : return(Alt_Y);
-	 case 'Z' : return(Alt_Z);
-	 default  : return(0);
+     case 'A' : return(Alt_A);
+     case 'B' : return(Alt_B);
+     case 'C' : return(Alt_C);
+     case 'D' : return(Alt_D);
+     case 'E' : return(Alt_E);
+     case 'F' : return(Alt_F);
+     case 'G' : return(Alt_G);
+     case 'H' : return(Alt_H);
+     case 'I' : return(Alt_I);
+     case 'J' : return(Alt_J);
+     case 'K' : return(Alt_K);
+     case 'L' : return(Alt_L);
+     case 'M' : return(Alt_M);
+     case 'N' : return(Alt_N);
+     case 'O' : return(Alt_O);
+     case 'P' : return(Alt_P);
+     case 'Q' : return(Alt_Q);
+     case 'R' : return(Alt_R);
+     case 'S' : return(Alt_S);
+     case 'T' : return(Alt_T);
+     case 'U' : return(Alt_U);
+     case 'V' : return(Alt_V);
+     case 'W' : return(Alt_W);
+     case 'X' : return(Alt_X);
+     case 'Y' : return(Alt_Y);
+     case 'Z' : return(Alt_Z);
+     default  : return(0);
    }
  }
 
@@ -181,32 +184,90 @@ word Ctrl(char Alph)
  {
   switch(UpCase(Alph))
    {
-	 case 'A' : return(Ctrl_A);
-	 case 'B' : return(Ctrl_B);
-	 case 'C' : return(Ctrl_C);
-	 case 'D' : return(Ctrl_D);
-	 case 'E' : return(Ctrl_E);
-    case 'F' : return(Ctrl_F);
-	 case 'G' : return(Ctrl_G);
-	 case 'H' : return(Ctrl_H);
-	 case 'I' : return(Ctrl_I);
-	 case 'J' : return(Ctrl_J);
-	 case 'K' : return(Ctrl_K);
-	 case 'L' : return(Ctrl_L);
-	 case 'M' : return(Ctrl_M);
-	 case 'N' : return(Ctrl_N);
-	 case 'O' : return(Ctrl_O);
-	 case 'P' : return(Ctrl_P);
-	 case 'Q' : return(Ctrl_Q);
-	 case 'R' : return(Ctrl_R);
-	 case 'S' : return(Ctrl_S);
-	 case 'T' : return(Ctrl_T);
-	 case 'U' : return(Ctrl_U);
-	 case 'V' : return(Ctrl_V);
-	 case 'W' : return(Ctrl_W);
-	 case 'X' : return(Ctrl_X);
-	 case 'Y' : return(Ctrl_Y);
-	 case 'Z' : return(Ctrl_Z);
-	 default  : return(0);
+     case 'A' : return(Ctrl_A);
+     case 'B' : return(Ctrl_B);
+     case 'C' : return(Ctrl_C);
+     case 'D' : return(Ctrl_D);
+     case 'E' : return(Ctrl_E);
+     case 'F' : return(Ctrl_F);
+     case 'G' : return(Ctrl_G);
+     case 'H' : return(Ctrl_H);
+     case 'I' : return(Ctrl_I);
+     case 'J' : return(Ctrl_J);
+     case 'K' : return(Ctrl_K);
+     case 'L' : return(Ctrl_L);
+     case 'M' : return(Ctrl_M);
+     case 'N' : return(Ctrl_N);
+     case 'O' : return(Ctrl_O);
+     case 'P' : return(Ctrl_P);
+     case 'Q' : return(Ctrl_Q);
+     case 'R' : return(Ctrl_R);
+     case 'S' : return(Ctrl_S);
+     case 'T' : return(Ctrl_T);
+     case 'U' : return(Ctrl_U);
+     case 'V' : return(Ctrl_V);
+     case 'W' : return(Ctrl_W);
+     case 'X' : return(Ctrl_X);
+     case 'Y' : return(Ctrl_Y);
+     case 'Z' : return(Ctrl_Z);
+     default  : return(0);
    }
  }
+
+void SubStr(char *Src,char *Dst,int Strt,int Len)
+ {
+  int i,l=strlen(Src);
+  for (i=0;i<Len && i<l-Strt;i++)
+     Dst[i] = Src[Strt+i];
+  Dst[i] = '\0';
+ }
+
+word StrToKey(char *src)
+ {
+  word rvKey=0,i=0,l;
+  char *tmp,dst[6],Cmp[7];
+  tmp = new(char[strlen(src)+1]);
+
+  strcpy(tmp,src);
+  strupr(tmp);
+  for (i=0;tmp[i]!='\0' && (tmp[i]<'A' || tmp[i]>'Z');i++);
+  switch(tmp[i])
+   {
+    case 'A':l=3;
+             strcpy(Cmp,"Alt");
+             break;
+    case 'C':l=4;
+             strcpy(Cmp,"Ctrl");
+             break;
+    case 'S':l=5;
+             strcpy(Cmp,"Shift");
+             break;
+    default :l=6;
+             strcpy(Cmp,"\0");
+             break;
+   }
+  if (l<6)
+   {
+    SubStr(tmp,dst,i,l);
+    if (!strcmpi(dst,Cmp))
+     {
+      for(i+=l;tmp[i]!='\0' && (tmp[i]<'A' || tmp[i]>'Z');i++);
+       if (tmp[i]=='F')
+        if (tmp[i+1] >= '0' && tmp[i+1] <='9')
+         {
+          SubStr(tmp,dst,i+1,2);
+          l -= 3;
+         }
+     }
+    switch(l)
+     {
+      case 0 : rvKey = AltF(atoi(dst));break;
+      case 1 : rvKey = CtrlF(atoi(dst));break;
+      case 2 : rvKey = ShiftF(atoi(dst));break;
+      case 3 : rvKey = Alt(tmp[i]);break;
+      case 4 : rvKey = Ctrl(tmp[i]);break;
+      //case 5 : rvKey = Shft(tmp[i]);break;
+     }
+   }
+   return(rvKey);
+  }

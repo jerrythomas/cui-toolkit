@@ -282,8 +282,8 @@ class Menu : public Tool
      word    swMenu;            // Menu type & other flags
      Pad     *P;                // Ptr to first Pad
      byte    Hot,               // Index Of Highlighted Pad
-	     visF,              // Index Of first Visible Pad
-	     visL;              // Index Of last Visible Pad
+             visF,              // Index Of first Visible Pad
+             visL;              // Index Of last Visible Pad
 
      byte    MaxPads;           // Maximum number of pads in menu
      Menu    *Ptr;              // Pointer to a menu
@@ -510,8 +510,8 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
       Restore();
       if (swScr&NoShadow)
        {
-	 w--;h--;
-	 swScr^=NoShadow;
+         w--;h--;
+         swScr^=NoShadow;
        }
       Capture(x,y,w,h);
     }
@@ -568,13 +568,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w  = W*n/N;
        h  = H*n/N;
        if (h>0 && w>0)
-	{
-	 SrcOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
-	 DstOff = (Screen.Width*Y+X)*2;
-	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	 if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
-	 delay(10);
-	}
+        {
+         SrcOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
+         DstOff = (Screen.Width*Y+X)*2;
+         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+         if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
+         delay(10);
+        }
       }
   else if (Style == SlideLtDn)
      for(n=1;n<=N;n++)
@@ -582,13 +582,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w      = W*n/N;
        h      = H*n/N;
        if (h>0 && w>0)
-	{
-	 SrcOff = (Screen.Width*(Y+H-h)+X)*2;
-	 DstOff = (Screen.Width*Y+X+W-w)*2;
-	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	 if (swScr&EffShadow) BoxShadow(X+W-w,Y,X+W-1,Y+h-1);
-	 delay(10);
-	}
+        {
+         SrcOff = (Screen.Width*(Y+H-h)+X)*2;
+         DstOff = (Screen.Width*Y+X+W-w)*2;
+         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+         if (swScr&EffShadow) BoxShadow(X+W-w,Y,X+W-1,Y+h-1);
+         delay(10);
+        }
       }
   else if (Style == SlideRtUp)
      for(n=1;n<=N;n++)
@@ -596,13 +596,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w      = W*n/N;
        h      = H*n/N;
        if (h>0 && w>0)
-	{
-	 SrcOff = (Screen.Width*Y+X+W-w)*2;
-	 DstOff = (Screen.Width*(Y+H-h)+X)*2;
-	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	 if (swScr&EffShadow) BoxShadow(X,Y+H-h,X+w-1,Y+H-1);
-	 delay(10);
-	}
+        {
+         SrcOff = (Screen.Width*Y+X+W-w)*2;
+         DstOff = (Screen.Width*(Y+H-h)+X)*2;
+         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+         if (swScr&EffShadow) BoxShadow(X,Y+H-h,X+w-1,Y+H-1);
+         delay(10);
+        }
       }
   else if (Style == SlideLtUp)
      for(n=1;n<=N;n++)
@@ -610,13 +610,13 @@ void ScrX::ShowEffect(byte x,byte y,byte w,byte h)
        w      = W*n/N;
        h      = H*n/N;
        if (h>0 && w>0)
-	{
-	  SrcOff = (Screen.Width*Y+X)*2;
-	  DstOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
-	  xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	  if (swScr&EffShadow) BoxShadow(X+W-w,Y+H-h,X+W-1,Y+H-1);
-	  delay(10);
-	}
+        {
+          SrcOff = (Screen.Width*Y+X)*2;
+          DstOff = (Screen.Width*(Y+H-h)+X+W-w)*2;
+          xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+          if (swScr&EffShadow) BoxShadow(X+W-w,Y+H-h,X+W-1,Y+H-1);
+          delay(10);
+        }
       }
   else
     Copy(DrwPg,RufPg,X,Y,W,H);
@@ -681,14 +681,14 @@ void ScrX::UndoEffect()
        w  = eW*n/N;
        h  = eH*n/N;
        if (h>0 && w>0)
-	{
-	 SrcOff = (Screen.Width*(Y+eH-h)+X+eW-w)*2;
-	 DstOff = (Screen.Width*Y+X)*2;
-	 Restore();
-	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	 if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
-	 delay(10);
-	}
+        {
+         SrcOff = (Screen.Width*(Y+eH-h)+X+eW-w)*2;
+         DstOff = (Screen.Width*Y+X)*2;
+         Restore();
+         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+         if (swScr&EffShadow) BoxShadow(X,Y,X+w-1,Y+h-1);
+         delay(10);
+        }
       }
   else if (Style == SlideLtDn)
      for(n=N;n>0;n--)
@@ -696,14 +696,14 @@ void ScrX::UndoEffect()
        w      = eW*n/N;
        h      = eH*n/N;
        if (h>0 && w>0)
-	{
-	 SrcOff = (Screen.Width*(Y+eH-h)+X)*2;
-	 DstOff = (Screen.Width*Y+X+eW-w)*2;
-	 Restore();
-	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	 if (swScr&EffShadow) BoxShadow(X+eW-w,Y,X+eW-1,Y+h-1);
-	 delay(10);
-	}
+        {
+         SrcOff = (Screen.Width*(Y+eH-h)+X)*2;
+         DstOff = (Screen.Width*Y+X+eW-w)*2;
+         Restore();
+         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+         if (swScr&EffShadow) BoxShadow(X+eW-w,Y,X+eW-1,Y+h-1);
+         delay(10);
+        }
       }
   else if (Style == SlideRtUp)
      for(n=N;n>0;n--)
@@ -711,14 +711,14 @@ void ScrX::UndoEffect()
        w      = eW*n/N;
        h      = eH*n/N;
        if (h>0 && w>0)
-	{
-	 SrcOff = (Screen.Width*Y+X+eW-w)*2;
-	 DstOff = (Screen.Width*(Y+eH-h)+X)*2;
-	 Restore();
-	 xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	 if (swScr&EffShadow) BoxShadow(X,Y+eH-h,X+w-1,Y+eH-1);
-	 delay(10);
-	}
+        {
+         SrcOff = (Screen.Width*Y+X+eW-w)*2;
+         DstOff = (Screen.Width*(Y+eH-h)+X)*2;
+         Restore();
+         xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+         if (swScr&EffShadow) BoxShadow(X,Y+eH-h,X+w-1,Y+eH-1);
+         delay(10);
+        }
       }
   else if (Style == SlideLtUp)
      for(n=N;n>0;n--)
@@ -726,14 +726,14 @@ void ScrX::UndoEffect()
        w      = eW*n/N;
        h      = eH*n/N;
        if (h>0 && w>0)
-	{
-	  SrcOff = (Screen.Width*Y+X)*2;
-	  DstOff = (Screen.Width*(Y+eH-h)+X+eW-w)*2;
-	  Restore();
-	  xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
-	  if (swScr&EffShadow) BoxShadow(X+eW-w,Y+eH-h,X+eW-1,Y+eH-1);
-	  delay(10);
-	}
+        {
+          SrcOff = (Screen.Width*Y+X)*2;
+          DstOff = (Screen.Width*(Y+eH-h)+X+eW-w)*2;
+          Restore();
+          xCopy(DrwPg,RufPg,DstOff,SrcOff,w,h);
+          if (swScr&EffShadow) BoxShadow(X+eW-w,Y+eH-h,X+eW-1,Y+eH-1);
+          delay(10);
+        }
       }
     Restore();
  }
@@ -921,16 +921,16 @@ byte Menu::Search(word ID,Pad *Q)
    {
      for (i=0;i<MaxPads && P[i].PadID != ID;i++);
       if (P[i].PadID==ID)
-	{
-	  found = 1;
-	  Q     = &P[i];
-	}
+        {
+          found = 1;
+          Q     = &P[i];
+        }
        else
-	{
-	 for (i=0;i<MaxPads && !found;i++)
-	   if (P[i].SubMenu)
-	     found  = P[i].SubMenu->Search(ID,Q);
-	}
+        {
+         for (i=0;i<MaxPads && !found;i++)
+           if (P[i].SubMenu)
+             found  = P[i].SubMenu->Search(ID,Q);
+        }
    }
   return found;
  }
@@ -1013,17 +1013,17 @@ byte Menu::NextPad(byte XorY,byte i)
      {
       if (P[i].swItem&MenuBreak)
        {
-	byte w=0;
-	byte j,R=(swMenu&Border) ? X+W-3:X+W-1;
-	for (j=i+1;j <= visL && w+XorY < R;j++)
-	if (!(P[j].swItem&HiddenPad))
-	   w += 1+Spc+Spc+strlen(P[j].Cap->Txt);
-	if (w+XorY > R)
-	   w -= 1+Spc+Spc+strlen(P[j].Cap->Txt);
-	XorY = R-w+1;
+        byte w=0;
+        byte j,R=(swMenu&Border) ? X+W-3:X+W-1;
+        for (j=i+1;j <= visL && w+XorY < R;j++)
+        if (!(P[j].swItem&HiddenPad))
+           w += 1+Spc+Spc+strlen(P[j].Cap->Txt);
+        if (w+XorY > R)
+           w -= 1+Spc+Spc+strlen(P[j].Cap->Txt);
+        XorY = R-w+1;
        }
       else
-	XorY+= Spc+Spc+1+strlen(P[i].Cap->Txt);
+        XorY+= Spc+Spc+1+strlen(P[i].Cap->Txt);
      }
    }
   return(XorY);
@@ -1040,25 +1040,25 @@ void Menu::DrawPad(byte xL,byte y,byte xR,Pad *Q,byte Txt,byte Hot)
       Q->Cap->Parse(x,y,Txt,Hot);
       if (swMenu&MenuVt)
        {
-	xR -= Spc-1;
-	if (Q->SubMenu != (Menu*)NULL)
-	 {
-	  xPrintf(xR-1,y,"%c",RtTriAngl);
-	  xR -= 2;
-	 }
-	xPrintf(xR-strlen(Q->Cap->ShortCut),y,Q->Cap->ShortCut);
-	TxtAttr = Txt;
-	xL++;
-	if (Q->swItem&RadioPad)
-	 {
-	  xPrintf(xL  ,y,"( )");
-	  xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Sphere:Blank);
-	 }
-	if (Q->swItem&CheckPad)
-	 {
-	  xPrintf(xL  ,y,"[ ]");
-	  xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Tick:Blank);
-	 }
+        xR -= Spc-1;
+        if (Q->SubMenu != (Menu*)NULL)
+         {
+          xPrintf(xR-1,y,"%c",RtTriAngl);
+          xR -= 2;
+         }
+        xPrintf(xR-strlen(Q->Cap->ShortCut),y,Q->Cap->ShortCut);
+        TxtAttr = Txt;
+        xL++;
+        if (Q->swItem&RadioPad)
+         {
+          xPrintf(xL  ,y,"( )");
+          xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Sphere:Blank);
+         }
+        if (Q->swItem&CheckPad)
+         {
+          xPrintf(xL  ,y,"[ ]");
+          xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Tick:Blank);
+         }
        }
     }
  }
@@ -1082,14 +1082,14 @@ void Menu::DrawMenu()
      {
       DrawBox(x-Spc,Y,R+1,B,(swMenu&MnuBoxStyle)>>MnuBoxShft);
       if (swMenu&Shadow)
-	BoxShadow(X,Y,R+2,B);
+        BoxShadow(X,Y,R+2,B);
      }
     if (swMenu&MenuVt)
      {
       if (visF >0 || visL < MaxPads-1)
        {
-	xPrintf(R-3-(Spc/2),Y,"[%c]",uArrow);
-	xPrintf(R-3-(Spc/2),B,"[%c]",dArrow);
+        xPrintf(R-3-(Spc/2),Y,"[%c]",uArrow);
+        xPrintf(R-3-(Spc/2),B,"[%c]",dArrow);
        }
      }
     for (i=visF;i<=visL;i++)
@@ -1109,20 +1109,20 @@ void Menu::DrawMenu()
     if (P[i].swItem&MenuBreak)
      {
        if ((swMenu&MenuVt) && (P[i].swItem&RefreshPad))
-	{
-	  TxtAttr = cs->Box;
-	  DrawLineHz(x-Spc-1,y,R+1,((swMenu&MnuBoxStyle)>>MnuBoxShft)&0x01);
-	}
+        {
+          TxtAttr = cs->Box;
+          DrawLineHz(x-Spc-1,y,R+1,((swMenu&MnuBoxStyle)>>MnuBoxShft)&0x01);
+        }
        Flag = 0x10;
      }
     else if (i == Hot)
      {
        DrawPad(x,y,R,&P[i],cs->Xec,cs->XecHi);
        if (P[i].SubMenu != (Menu*)NULL)
-	 if (Flag&0x10)
-	   P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? X+Spc+5:R-P[i].SubMenu->W,y+1);
-	 else
-	   P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? X+Spc+5:x,y+1);
+         if (Flag&0x10)
+           P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? X+Spc+5:R-P[i].SubMenu->W,y+1);
+         else
+           P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? X+Spc+5:x,y+1);
        //Status(P[i].Msg);
      }
     else if (P[i].swItem&ActivePad)
@@ -1138,8 +1138,8 @@ void Menu::DrawMenu()
        y = NextPad(y,i);
       else
        {
-	 x = NextPad(x,i);
-	 R = NextPad(x,i+1)-2;
+         x = NextPad(x,i);
+         R = NextPad(x,i+1)-2;
        }
      }
    }
@@ -1214,9 +1214,9 @@ Menu::~Menu()
     {
       if (P[i].SubMenu != (Menu*)NULL)
        if (P[i].SubMenu->swMenu&InternalAlloc)
-	  delete P[i].SubMenu;
+          delete P[i].SubMenu;
        else
-	  P[i].SubMenu->Ptr = (Menu*)NULL;
+          P[i].SubMenu->Ptr = (Menu*)NULL;
       delete P[i].Cap->Txt;
       P[i].SubMenu  = (Menu*)NULL;
       P[i].PadApp   = NoApp;
@@ -1251,8 +1251,8 @@ byte Menu::AddPad(char *Txt, word PadType)
      {
       if (Q->swItem&SetSpc)
        {
-	Ptr->W  += (Spc < 5) ? (5-Spc):0;
-	Ptr->Spc = max(5,Ptr->Spc);
+        Ptr->W  += (Spc < 5) ? (5-Spc):0;
+        Ptr->Spc = max(5,Ptr->Spc);
        }
       int Wd  = strlen(Q->Cap->Txt)+strlen(Q->Cap->ShortCut);
       Wd     += (Wd > strlen(Q->Cap->Txt)) ? 2:0;
@@ -1379,9 +1379,9 @@ byte Menu::SetState(word MenuID,bool State)
    if (rvFlag)
     {
       if (State)
-	Q->swItem |= PadState;
+        Q->swItem |= PadState;
       else
-	Q->swItem &= MaskPadState;
+        Q->swItem &= MaskPadState;
     }
    return rvFlag;
  }
@@ -1402,9 +1402,9 @@ byte Menu::Activity(word MenuID,bool OnOff)
    if (rvFlag)
     {
       if (OnOff)
-	Q->swItem |= ActivePad;
+        Q->swItem |= ActivePad;
       else
-	Q->swItem &= MaskActivity;
+        Q->swItem &= MaskActivity;
     }
    return rvFlag;
  }
@@ -1415,9 +1415,9 @@ byte Menu::Visibility(word MenuID,bool OnOff)
    if (rvFlag)
     {
       if (OnOff)
-	Q->swItem &= MaskVisibility;
+        Q->swItem &= MaskVisibility;
       else
-	Q->swItem |= HiddenPad;
+        Q->swItem |= HiddenPad;
     }
    return rvFlag;
  }
@@ -1442,7 +1442,7 @@ bool Menu::KeyDown(word Key)
         {
          swMenu|=MenuOpen;
          Hot = n-1;
-	 Open();
+         Open();
          XecPadApp(XecPad);
         }
        else rvHndl = false;
@@ -1457,60 +1457,60 @@ bool Menu::KeyDown(word Key)
     switch(Key)
      {
       case LtArr: if (!(Ptr->swMenu&MenuVt))
-		     Ptr->ScrollPadPrv();
-		  else if (Ptr != this && !(Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadPrv();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= (Ptr != this) ? Close:0;
-		  break;
+                     Ptr->ScrollPadPrv();
+                  else if (Ptr != this && !(Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadPrv();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= (Ptr != this) ? Close:0;
+                  break;
       case RtArr: if (!(Ptr->swMenu&MenuVt))
-		     Ptr->ScrollPadNxt();
-		  else if (Ptr != this && !(Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadNxt();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= XecPad;
-		  break;
+                     Ptr->ScrollPadNxt();
+                  else if (Ptr != this && !(Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadNxt();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= XecPad;
+                  break;
       case UpArr: if (Ptr->swMenu&MenuVt)
-		     Ptr->ScrollPadPrv();
-		  else if ((Prv != this) && (Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadPrv();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= (Ptr != this) ? Close:0;
-		  break;
+                     Ptr->ScrollPadPrv();
+                  else if ((Prv != this) && (Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadPrv();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= (Ptr != this) ? Close:0;
+                  break;
       case DnArr: if (Ptr->swMenu&MenuVt)
-		     Ptr->ScrollPadNxt();
-		  else if ((Ptr != this) && (Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadNxt();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= XecPad;
-		  break;
+                     Ptr->ScrollPadNxt();
+                  else if ((Ptr != this) && (Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadNxt();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= XecPad;
+                  break;
       case EscKy: Flag = Close;  break;
       case RetKy: Flag = XecPad; break;
       case SpcKy: Flag = XecPad; break;
       default   : Key = UpCase(Key);
                   for (n=visF;n <= visL && !(Flag&XecPad);n++)
-		   {
-		    if (Ptr->P[n].swItem&ActivePad)
-		     {
-		      HotKey = UpCase(Ptr->P[n].Cap->Txt[Ptr->P[n].Hot]);
-		      Flag   = (Key == HotKey)?  XecPad:0;
-		     }
-		   }
-		  if (Flag&XecPad)
+                   {
+                    if (Ptr->P[n].swItem&ActivePad)
+                     {
+                      HotKey = UpCase(Ptr->P[n].Cap->Txt[Ptr->P[n].Hot]);
+                      Flag   = (Key == HotKey)?  XecPad:0;
+                     }
+                   }
+                  if (Flag&XecPad)
                      Ptr->Hot = n-1;
-		  break;
+                  break;
      }
     if (Prv->Hot != pp)
      {
@@ -1551,7 +1551,7 @@ bool Menu::MouseMove(int mx,int my)
      {
       byte x=Ptr->NextPad(Ptr->X+1,p);
       while (p != Ptr->visL && x-1 < mx)
-	x = Ptr->NextPad(x,++p);
+        x = Ptr->NextPad(x,++p);
       rvEvtProcessed = (bool)(x-1 > mx && Ptr->X < mx && (Ptr->P[p].swItem&ActivePad));
      }
     if (rvEvtProcessed)
@@ -1582,7 +1582,7 @@ bool Menu::MouseLeftClick(int mx,int my)
          if (mx == r-Spc)
           if (my==Ptr->Y)
            {
-	     Ptr->ScrollPadPrv();
+             Ptr->ScrollPadPrv();
              Flag = 0x01;
            }
           else if (my==b)
@@ -1602,7 +1602,7 @@ bool Menu::MouseLeftClick(int mx,int my)
      {
       byte x=Ptr->NextPad(Ptr->X+1,p);
       while (p != Ptr->visL && x-1 < mx)
-	x = Ptr->NextPad(x,++p);
+        x = Ptr->NextPad(x,++p);
       if (Ptr->P[p].swItem&ActivePad)
       Flag = (x-1 > mx && Ptr->X < mx) ? 0x11:0;
 
@@ -1647,15 +1647,15 @@ void Menu::XecPadApp(byte Flag)
      {
        MenuID = Q->PadID;
        if (Q->swItem&CheckPad)
-	   Q->swItem ^= PadState;
+           Q->swItem ^= PadState;
        if (Q->swItem&RadioPad && !(Q->swItem&PadState))
         {
-	  int i;
-	  for (i=Ptr->Hot-1;i >= Ptr->visF && Ptr->P[i].swItem&RadioPad;i--);
-	  for (i++;i <= Ptr->visL && Ptr->P[i].swItem&RadioPad;i++)
-	     Ptr->P[i].swItem &= MaskPadState;
-	  Q->swItem ^= PadState;
-	}
+          int i;
+          for (i=Ptr->Hot-1;i >= Ptr->visF && Ptr->P[i].swItem&RadioPad;i--);
+          for (i++;i <= Ptr->visL && Ptr->P[i].swItem&RadioPad;i++)
+             Ptr->P[i].swItem &= MaskPadState;
+          Q->swItem ^= PadState;
+        }
        Flag = Close;
      }
    }

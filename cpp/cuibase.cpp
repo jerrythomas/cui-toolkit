@@ -1,6 +1,10 @@
 #ifndef __CUIBASE_H
 #define __CUIBASE_H
 
+#ifndef __STDIO_H
+#include <stdio.h>
+#endif
+
 #ifndef __KBD_H
 #include <kbd.h>
 #endif
@@ -225,29 +229,27 @@ class ViewPort
       void Set(byte x,byte y,byte w,byte h);
   };
 
-  byte GetAdapterInf(VgaInf *Vai);
-  word GetMaxX();
-  word GetMaxY();
-  byte GetMaxPg();
-  byte GetMaxCol();
+  byte far GetAdapterInf(VgaInf *Vai);
+  word far GetMaxX();
+  word far GetMaxY();
+  byte far GetMaxPg();
+  byte far GetMaxCol();
 
-  void GetVidAt(byte Page, byte x ,byte y, byte& Chr, byte& Attr);
-  void SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr);
+  void far GetVidAt(byte Page, byte x ,byte y, byte& Chr, byte& Attr);
+  void far SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr);
 
-  void ModeSearch(dword Mode);
-  void ClrPage(byte Page, byte Attr);
-  void FillChr(byte L, byte T, byte R, byte B, byte Fill);
-  void ChrBox(byte L, byte T, byte R, byte B, byte Fill);
+  void far ModeSearch(dword Mode);
+  void far ClrPage(byte Page, byte Attr);
+  void far FillChr(byte L, byte T, byte R, byte B, byte Fill);
+  void far ChrBox(byte L, byte T, byte R, byte B, byte Fill);
 
-  void DrawLineHz(byte xL, byte y, byte xR, byte Style);
-  void DrawLineVt(byte x, byte yT, byte yB, byte Style);
-  void DrawBox(byte L,byte T,byte R,byte B,byte Style);
-  void BoxShadow(byte L,byte T,byte R,byte B);
+  void far DrawLineHz(byte xL, byte y, byte xR, byte Style);
+  void far DrawLineVt(byte x, byte yT, byte yB, byte Style);
+  void far DrawBox(byte L,byte T,byte R,byte B,byte Style);
+  void far BoxShadow(byte L,byte T,byte R,byte B);
 
-  int  xPrintf(byte x, byte y, char *fmt,...);
+  int  far xPrintf(byte x, byte y, char *fmt,...);
 
-  void SubStr(char *Src,char *Dst,int Strt,int Len);
-  word StrToKey(char *src);
 
 extern byte      ActPg,DrwPg,RufPg;
 extern VDU       Screen;
@@ -267,7 +269,7 @@ ViewPort Vp;
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-byte GetAdapterInf(VgaInf *Vai)
+byte far GetAdapterInf(VgaInf *Vai)
  {
 /*  byte rv=0;
   word wSeg = FP_SEG(Vai);
@@ -293,8 +295,8 @@ byte GetAdapterInf(VgaInf *Vai)
   reg.r_di = FP_OFF(Vai);
   intr(0x10,&reg);
   return(((reg.r_ax&0x00FF) == 0x1B) ? 1:0);
- }
 
+ }
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 // <<>>                                                         <<>>
 // <<>>                 VDU : Module Source Code                <<>>
@@ -313,7 +315,7 @@ void VDU::VDU()
   SetScreen();
  }
 
-void VDU::SetScreen()
+void far VDU::SetScreen()
  {
   GetAdapterInf(&Vai);
   Width  = Vai.NumChrClmns;
@@ -328,7 +330,6 @@ void VDU::SetScreen()
     PgBuf[Pages] = (char *)PgBuf[Pages-1]+Vai.VidRefreshBufLen;
   Ms.SetScale(8,Vai.ChrHtScanLns);
  }
-
 char *VDU::BufAddr(byte Page)
  {
   Page = (Page<Pages) ? Page:0;
@@ -345,14 +346,14 @@ Mouse::Mouse()
  {
   xSz = ySz = 1;
  }
-void Mouse::SetMouse(int mx,int my,word Btn,word Evt)
+void far Mouse::SetMouse(int mx,int my,word Btn,word Evt)
  {
   x        = mx / xSz;
   y        = my / ySz;
   EvtFlags = Evt;
   BtnState = Btn;
  }
-void Mouse::SetScale(int x_Sz,int y_Sz)
+void far Mouse::SetScale(int x_Sz,int y_Sz)
  {
   xSz = (x_Sz > 0) ? x_Sz:1;
   ySz = (y_Sz > 0) ? y_Sz:1;
@@ -371,7 +372,7 @@ ViewPort::ViewPort()
   W = Screen.Width;
   H = Screen.Height;
  }
-void ViewPort::Set(byte x,byte y,byte w,byte h)
+void far ViewPort::Set(byte x,byte y,byte w,byte h)
  {
   X = x;
   Y = y;
@@ -380,31 +381,31 @@ void ViewPort::Set(byte x,byte y,byte w,byte h)
  }
 
 byte far BoxS[5][8] = {
-		       { 0xDA,0xC2,0xBF,0xB4,0xD9,0xC1,0xC0,0xC3 },
-		       { 0xD5,0xD1,0xB8,0xB5,0xBE,0xCF,0xD4,0xC6 },
-		       { 0xD6,0xD2,0xB7,0xB6,0xBD,0xD0,0xD3,0xC7 },
-		       { 0xC9,0xCB,0xBB,0xB9,0xBC,0xCA,0xC8,0xCC },
-		       { 0xC4,0xCD,0xB3,0xBA,0xC5,0xD8,0xD7,0xCE }
-		      };
+                    { 0xDA,0xC2,0xBF,0xB4,0xD9,0xC1,0xC0,0xC3 },
+                    { 0xD5,0xD1,0xB8,0xB5,0xBE,0xCF,0xD4,0xC6 },
+		    { 0xD6,0xD2,0xB7,0xB6,0xBD,0xD0,0xD3,0xC7 },
+                    { 0xC9,0xCB,0xBB,0xB9,0xBC,0xCA,0xC8,0xCC },
+                    { 0xC4,0xCD,0xB3,0xBA,0xC5,0xD8,0xD7,0xCE }
+		  };
 
-word GetMaxX()
+word far GetMaxX()
  {
    return(Screen.Width-1);
  }
-word GetMaxY()
+word far GetMaxY()
  {
    return(Screen.Height-1);
  }
-byte GetMaxPg()
+byte far GetMaxPg()
  {
    return(Screen.Pages);
  }
-byte GetMaxCol()
+byte far GetMaxCol()
  {
    return(Screen.Colors);
  }
 
-void GetVidAt(byte Page, byte x,byte y, byte& Chr, byte& Attr)
+void far GetVidAt(byte Page, byte x,byte y, byte& Chr, byte& Attr)
  {
   char *VgaBuf;
   VgaBuf = Screen.BufAddr(Page) + Screen.Delta * y + x*2;
@@ -412,7 +413,7 @@ void GetVidAt(byte Page, byte x,byte y, byte& Chr, byte& Attr)
   Attr = *++VgaBuf;
  }
 
-void SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr)
+void far SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr)
  {
   char *VgaBuf;
   VgaBuf = Screen.BufAddr(Page) + Screen.Delta * y + x*2;
@@ -420,7 +421,7 @@ void SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr)
   *++VgaBuf = Attr;
  }
 
-void ModeSearch(dword Mode)
+void far ModeSearch(dword Mode)
  {
   byte Flag=0x00;
   byte m    = (Mode&ModeMask);
@@ -444,7 +445,7 @@ void ModeSearch(dword Mode)
   if (!Flag) SetVidMode(3);
   Screen.SetScreen();
  }
-void ClrPage(byte Page,byte Attr)
+void far ClrPage(byte Page,byte Attr)
  {
   char Pattern[2];
   byte X,Y;
@@ -461,7 +462,7 @@ void ClrPage(byte Page,byte Attr)
       SetVidAt(Page,x,y,' ',Attr);*/
  }
 
-bool BoxSym(byte X,byte Y,byte& R,byte& C)
+bool far BoxSym(byte X,byte Y,byte& R,byte& C)
  {
   bool RetVal = false;
   GetVidAt(DrwPg,X,Y,VidChr,VidAtr);
@@ -476,7 +477,7 @@ bool BoxSym(byte X,byte Y,byte& R,byte& C)
   return(RetVal);
  }
 
-void BoxCorner(byte X,byte Y,byte R,byte C)
+void far BoxCorner(byte X,byte Y,byte R,byte C)
  {
   byte NewR,NewC,Va,Vb;
   NewR = R;
@@ -520,7 +521,7 @@ void BoxCorner(byte X,byte Y,byte R,byte C)
     }
   SetVidAt(DrwPg,X,Y,BoxS[NewR][NewC],TxtAttr);
  }
-void DrawLineHz(byte xL, byte y, byte xR, byte Style)
+void far DrawLineHz(byte xL, byte y, byte xR, byte Style)
  {
   byte NewR,NewC,R,C;
   byte Cx,Rx,V,Vc,x;
@@ -569,7 +570,7 @@ void DrawLineHz(byte xL, byte y, byte xR, byte Style)
     SetVidAt(DrwPg,x,y,BoxS[NewR][NewC],TxtAttr);
    }
  }
-void DrawLineVt(byte x, byte yT, byte yB, byte Style)
+void far DrawLineVt(byte x, byte yT, byte yB, byte Style)
  {
   byte NewR,NewC,R,C;
   byte Cx,Rx,Vc,y;
@@ -619,7 +620,7 @@ void DrawLineVt(byte x, byte yT, byte yB, byte Style)
    }
  }
 
-void DrawBox(byte L,byte T,byte R,byte B,byte Style)
+void far DrawBox(byte L,byte T,byte R,byte B,byte Style)
  {
 //	  if (L>R) Swap(&L,&R);
 //	  if (T>B) Swap(&T,&B);
@@ -632,7 +633,7 @@ void DrawBox(byte L,byte T,byte R,byte B,byte Style)
    DrawLineVt(R,T,B,(Style&0x02)>>1);
    DrawLineVt(L,T,B,(Style&0x02)>>1);
  }
-void BoxShadow(byte L,byte T,byte R,byte B)
+void far BoxShadow(byte L,byte T,byte R,byte B)
  {
   byte SaveAttr = TxtAttr;
   byte X,Y;
@@ -650,7 +651,7 @@ void BoxShadow(byte L,byte T,byte R,byte B)
   SetTexAttr(SaveAttr);
  }
 
-void FillChr(byte X,byte Y,byte W,byte H,byte FillPtn)
+void far FillChr(byte X,byte Y,byte W,byte H,byte FillPtn)
  {
    word DstOff = (Screen.Width*Y+X)*2;
    char Pattern[2];
@@ -661,7 +662,7 @@ void FillChr(byte X,byte Y,byte W,byte H,byte FillPtn)
     for (X=0;X<W;X++)
       memcpy(Screen.BufAddr(DrwPg)+DstOff+X*2,Pattern,2);
  }
-void ChrBox(byte X,byte Y,byte W,byte H,byte FillPtn)
+void far ChrBox(byte X,byte Y,byte W,byte H,byte FillPtn)
  {
    word DstOff = (Screen.Width*Y+X)*2;
    char Pattern[2];
@@ -680,7 +681,7 @@ void ChrBox(byte X,byte Y,byte W,byte H,byte FillPtn)
     }
  }
 
-int xPrintf(byte x,byte y,char *fmt, ...)
+int far xPrintf(byte x,byte y,char *fmt, ...)
 {
   char buf[255];
   va_list argptr;
@@ -695,61 +696,3 @@ int xPrintf(byte x,byte y,char *fmt, ...)
    SetVidAt(DrwPg,x,y,buf[i],TxtAttr);
   return(cnt);
 }
-
-void SubStr(char *Src,char *Dst,int Strt,int Len)
- {
-  int i,l=strlen(Src);
-  for (i=0;i<Len && i<l-Strt;i++)
-     Dst[i] = Src[Strt+i];
-  Dst[i] = '\0';
- }
-
-word StrToKey(char *src)
- {
-  word rvKey=0,i=0,l;
-  char *tmp,dst[6],Cmp[7];
-  tmp = new(char[strlen(src)+1]);
-
-  strcpy(tmp,src);
-  strupr(tmp);
-  for (i=0;tmp[i]!='\0' && (tmp[i]<'A' || tmp[i]>'Z');i++);
-  switch(tmp[i])
-   {
-    case 'A':l=3;
-             strcpy(Cmp,"Alt");
-             break;
-    case 'C':l=4;
-             strcpy(Cmp,"Ctrl");
-             break;
-    case 'S':l=5;
-             strcpy(Cmp,"Shift");
-             break;
-    default :l=6;
-             strcpy(Cmp,"\0");
-             break;
-   }
-  if (l<6)
-   {
-    SubStr(tmp,dst,i,l);
-    if (!strcmpi(dst,Cmp))
-     {
-      for(i+=l;tmp[i]!='\0' && (tmp[i]<'A' || tmp[i]>'Z');i++);
-       if (tmp[i]=='F')
-        if (tmp[i+1] >= '0' && tmp[i+1] <='9')
-         {
-          SubStr(tmp,dst,i+1,2);
-          l -= 3;
-         }
-     }
-    switch(l)
-     {
-      case 0 : rvKey = AltF(atoi(dst));break;
-      case 1 : rvKey = CtrlF(atoi(dst));break;
-      case 2 : rvKey = ShiftF(atoi(dst));break;
-      case 3 : rvKey = Alt(tmp[i]);break;
-      case 4 : rvKey = Ctrl(tmp[i]);break;
-      //case 5 : rvKey = Shft(tmp[i]);break;
-     }
-   }
-   return(rvKey);
-  }

@@ -1,6 +1,10 @@
 #ifndef __CUIBASE_H
 #define __CUIBASE_H
 
+#ifndef __STDIO_H
+#include <stdio.h>
+#endif
+
 #ifndef __KBD_H
 #include <kbd.h>
 #endif
@@ -17,13 +21,14 @@
 #define max(v1,v2) ((v1) > (v2)) ? (v1):(v2)
 #define min(v1,v2) ((v1) < (v2)) ? (v1):(v2)
 
-// Box Style Codes
+// cui Drawing Routines
 #define Single        0
 #define HDVS          1
 #define HSVD          2
 #define Double        3
 
 // Arrow Symbols
+
 #define uArrow        0x18
 #define dArrow        0x19
 #define rArrow        0x1A
@@ -73,7 +78,6 @@
 #define Epsilon       0xEE
 #define MinMax        0x12
 
-//Colour Codes : Dark
 #define Black         0x00
 #define Blue          0x01
 #define Green         0x02
@@ -82,7 +86,7 @@
 #define Magenta       0x05
 #define Brown         0x06
 #define LightGray     0x07
-//Colour Codes : Light
+
 #define DarkGray      0x08
 #define LightBlue     0x09
 #define LightGreen    0x0A
@@ -90,16 +94,13 @@
 #define LightRed      0x0C
 #define LightMagenta  0x0D
 #define Yellow        0x0E
-#define White         0x0F
-
-//Mode Information Extractors
+#define White           0x0F
 #define ModeMask        0x3F
 #define xResShift         12
 #define yResShift          6
 #define xResMask        0xFF
 #define yResMask        0x3F
 
-//Mode Constants
 #define Txt80x25x16x8   0x00050643
 #define Txt80x30x16x8   0x00050792
 #define Txt80x35x16x8   0x000508C3
@@ -172,21 +173,21 @@ struct far VgaInf
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class VDU
+class far VDU
  {
    public:
-     word    Delta;
-     byte    Width,Height;
-     byte    Pages,Colors;
+     word     Delta;
+     byte     Width,Height;
+     byte     Pages,Colors;
 
    private :
-     char    *PgBuf[8];
+     char     *PgBuf[8];
 
    public :
      VgaInf  Vai;
 
      VDU();
-     void SetScreen();
+     void far SetScreen();
      char *BufAddr(byte Page);
  };
 
@@ -196,7 +197,7 @@ class VDU
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class Mouse
+class far Mouse
   {
     private :
       int xSz,ySz;
@@ -207,8 +208,8 @@ class Mouse
       word EvtFlags;
 
       Mouse();
-      void SetMouse(int mx,int my,word Btn,word Evt);
-      void SetScale(int x_Sz,int y_Sz);
+      void far SetMouse(int mx,int my,word Btn,word Evt);
+      void far SetScale(int x_Sz,int y_Sz);
   };
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 // <<>>                                                         <<>>
@@ -216,42 +217,40 @@ class Mouse
 // <<>>                                                         <<>>
 // <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
-class ViewPort
+class far ViewPort
   {
     public :
       byte X,Y,W,H;
 
       ViewPort();
-      void Set(byte x,byte y,byte w,byte h);
+      void far Set(byte x,byte y,byte w,byte h);
   };
 
-  byte GetAdapterInf(VgaInf *Vai);
-  word GetMaxX();
-  word GetMaxY();
-  byte GetMaxPg();
-  byte GetMaxCol();
+  byte far GetAdapterInf(VgaInf *Vai);
+  word far GetMaxX();
+  word far GetMaxY();
+  byte far GetMaxPg();
+  byte far GetMaxCol();
 
-  void GetVidAt(byte Page, byte x ,byte y, byte& Chr, byte& Attr);
-  void SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr);
+  void far GetVidAt(byte Page, byte x ,byte y, byte& Chr, byte& Attr);
+  void far SetVidAt(byte Page, byte x ,byte y, byte Chr, byte Attr);
 
-  void ModeSearch(dword Mode);
-  void ClrPage(byte Page, byte Attr);
-  void FillChr(byte L, byte T, byte R, byte B, byte Fill);
-  void ChrBox(byte L, byte T, byte R, byte B, byte Fill);
+  void far ModeSearch(dword Mode);
+  void far ClrPage(byte Page, byte Attr);
+  void far FillChr(byte L, byte T, byte R, byte B, byte Fill);
+  void far ChrBox(byte L, byte T, byte R, byte B, byte Fill);
 
-  void DrawLineHz(byte xL, byte y, byte xR, byte Style);
-  void DrawLineVt(byte x, byte yT, byte yB, byte Style);
-  void DrawBox(byte L,byte T,byte R,byte B,byte Style);
-  void BoxShadow(byte L,byte T,byte R,byte B);
+  void far DrawLineHz(byte xL, byte y, byte xR, byte Style);
+  void far DrawLineVt(byte x, byte yT, byte yB, byte Style);
+  void far DrawBox(byte L,byte T,byte R,byte B,byte Style);
+  void far BoxShadow(byte L,byte T,byte R,byte B);
 
-  int  xPrintf(byte x, byte y, char *fmt,...);
+  int  far xPrintf(byte x, byte y, char *fmt,...);
 
-  void SubStr(char *Src,char *Dst,int Strt,int Len);
-  word StrToKey(char *src);
 
-extern byte      ActPg,DrwPg,RufPg;
-extern VDU       Screen;
-extern Mouse     Ms;
-extern ViewPort  Vp;
+extern byte     ActPg,DrwPg,RufPg;
+extern VDU      Screen;
+extern Mouse    Ms;
+extern ViewPort Vp;
 
 #endif

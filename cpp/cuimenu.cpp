@@ -3,26 +3,26 @@
 
 // Cui.Cpp Version 3.0
 // Total Hours  11 Hrs
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
-// <<>>                                                         <<>>
-// <<>>              Character User Interface Tool              <<>>
-// <<>>                                                         <<>>
-// <<>>                 Menu Generator Class                    <<>>
-// <<>>                                                         <<>>
-// <<>>   Features :                                            <<>>
-// <<>>                                                         <<>>
-// <<>>        Multiple Levels                                  <<>>
-// <<>>        Vertical/Horizontal Menus                        <<>>
-// <<>>        Check / Radio Pads                               <<>>
-// <<>>        Menubreaks                                       <<>>
-// <<>>        Special Effects                                  <<>>
-// <<>>        Direct Function Execution                        <<>>
-// <<>>        Hidden & Scrollable Menu Items                   <<>>
-// <<>>        Menu Activation/Deactivation                     <<>>
-// <<>>        On Line Messages for menu items                  <<>>
-// <<>>                                                         <<>>
-// <<>>                                                         <<>>
-// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>> <<>> <<>> <<>> <<>> <<>> <<-:->> <<>> <<>> <<>> <<>> <<>> <<>> <<>> <<>>
+// <<>>                                                                     <<>>
+// <<>>              Character User Interface Tool                          <<>>
+// <<>>                                                                     <<>>
+// <<>>                 Menu Generator Class                                <<>>
+// <<>>                                                                     <<>>
+// <<>>   Features :                                                        <<>>
+// <<>>                                                                     <<>>
+// <<>>        Multiple Levels                                              <<>>
+// <<>>        Vertical/Horizontal Menus                                    <<>>
+// <<>>        Check / Radio Pads                                           <<>>
+// <<>>        Menubreaks                                                   <<>>
+// <<>>        Special Effects                                              <<>>
+// <<>>        Direct Function Execution                                    <<>>
+// <<>>        Hidden & Scrollable Menu Items                               <<>>
+// <<>>        Menu Activation/Deactivation                                 <<>>
+// <<>>        On Line Messages for menu items                              <<>>
+// <<>>                                                                     <<>>
+// <<>>                                                                     <<>>
+// <<>> <<>> <<>> <<>> <<>> <<>> <<-:->> <<>> <<>> <<>> <<>> <<>> <<>> <<>> <<>>
 
 #include <mouse.h>
 #include <vdu.h>
@@ -113,19 +113,6 @@
 #define SlideLtMenuHz    0x0004
 #define SlideDnMenuHz    0x0006
 #define SlideUpMenuHz    0x0008
-#define SlideRtDnMenuHz  0x000A
-#define SlideLtDnMenuHz  0x000C
-#define SlideRtUpMenuHz  0x000E
-#define SlideLtUpMenuHz  0x0010
-#define RollRtMenuHz     0x0012
-#define RollLtMenuHz     0x0014
-#define RollDnMenuHz     0x0016
-#define RollUpMenuHz     0x0018
-
-#define SlideRtMenuVt    0x0003
-#define SlideLtMenuVt    0x0005
-#define SlideDnMenuVt    0x0007
-#define SlideUpMenuVt    0x0009
 #define SlideRtDnMenuVt  0x000B
 #define SlideLtDnMenuVt  0x000D
 #define SlideRtUpMenuVt  0x000F
@@ -138,35 +125,32 @@
 class Menu;            // Dummy declaration for reference by pad
 struct Pad
  {
-   word   swItem;      // Item Status Word
-   word   PadID;       // Pad Identification code
-   byte   Hot;         // Position of Hot Character
-   char   *Prompt;     // Contains the Prompt string
-   char   *ShortCut;   // Address of ShortCut String
-   App    PadApp;      // App to be taken on selection
-   char   *Msg;        // Message string for guidance
-   Menu   *SubMenu;    // Ptr to Sub-Menu
+   word    swItem;      // Item Status Word
+   word    PadID;       // Pad Identification code
+   byte    Hot;         // Position of Hot Character
+   Caption *Cap;        // Caption
+   App     PadApp;      // App to be taken on selection
+   char    *Msg;        // Message string for guidance
+   Menu    *SubMenu;    // Ptr to Sub-Menu
  };
 
-class Menu
+class Menu : public Tool
  {
    private :
-     Scheme  *MenuColSch;       // Colour Scheme
-     byte    L,T;               // Top Left Coordinates of Menu
-     byte    W,                 // Width  Of Menu
-	     H;                 // Height Of Menu
      byte    Spc,N;             // Spacing & Index variable
      word    swMenu;            // Menu type & other flags
      Pad     *P;                // Ptr to first Pad
      byte    Hot,               // Index Of Highlighted Pad
-	     visF,              // Index Of first Visible Pad
-	     visL;              // Index Of last Visible Pad
+             visF,              // Index Of first Visible Pad
+             visL;              // Index Of last Visible Pad
 
      byte    MaxPads;           // Maximum number of pads in menu
      Menu    *Ptr;              // Pointer to a menu
-     Image   *Sav;
+     ScrX    MnuX;
+     static  word    MenuID;
 
    private :
+
      byte Search(word ID,Pad *Q);
 
      byte ScrollUp(byte *idx,byte n);
@@ -178,8 +162,9 @@ class Menu
      void DrawPad(byte xL,byte y,byte xR,Pad *Q,byte Txt,byte Hot);
      void DrawMenu();
 
-     byte MenuMouse();
-     byte MenuCtrl();
+     byte ShutMenu(byte Flag);
+     void Open();
+     void XecPadApp(byte Flag);
 
    public :
 
@@ -187,23 +172,20 @@ class Menu
      Menu(word MenuType,byte MaxItem);
      ~Menu();
 
-     byte addPad(char *Txt, word PadType);
-     byte addPad(char *Txt, word PadType,App  PadApp);
-     byte addPad(char *Txt, word PadType,Menu *Sub);
-     byte addPad(char *Txt, word PadType,char *Hlp);
-     byte addPad(char *Txt, word PadType,App  PadApp,char *Hlp);
+     byte AddPad(char *Txt, word PadType);
+     byte AddPad(char *Txt, word PadType,App  PadApp);
+     byte AddPad(char *Txt, word PadType,Menu *Sub);
+     byte AddPad(char *Txt, word PadType,char *Hlp);
+     byte AddPad(char *Txt, word PadType,App  PadApp,char *Hlp);
 
-     byte addMenu(word MenuType,byte MaxItem);
-     byte addMenu(Menu *M);
+     byte AddMenu(word MenuType,byte MaxItem);
+     byte AddMenu(Menu *M);
 
-     byte addHelp(word MenuID,char *Hlp);
+     byte AddHelp(word ID,char *Hlp);
 
-     void addColor(Scheme *Sch);
-     void addColor(byte Txt,byte TxtHi,byte Xec,byte XecHi,byte Lck,byte Box);
+     void EndMenu();
 
-     void endMenu();
-
-     void SetOrigin(int X,int Y);
+     void SetOrigin(byte x,byte y);
 
      byte GetState(word ID,bool& State);
      byte SetState(word ID,bool  State);
@@ -211,129 +193,20 @@ class Menu
      byte Activity(word ID,bool OnOff);
      byte Visibility(word ID,bool OnOff);
 
-     byte ShutMenu(byte Flag);
-     void XecPadApp(byte Flag);
      bool KeyDown(word Key);
      bool MouseMove(int mx,int my);
      bool MouseLeftClick(int mx,int my);
 
-     bool Refresh();
+     //bool Refresh();
      bool Show();
-     word XecMenu();
-   /*
-     void RePaintMenu();
-     void SetPadHlp(word PadID,char *PadHlp);
-     void SetPadState(word PadID,word State);
-     void SetRepaintDeskTop(App PaintDesk);
-     void SetCloseDeskTop(App CloseDesk);*/
+     word GetMenuID();
  };
 
-extern Scheme Classic,CoolBlue,SoftGreen,RedAlert,StatusBar;
-#endif
-
-Scheme Classic,CoolBlue,SoftGreen,RedAlert,StatusBar;
-
-byte LabelAllocSize(char *txt)
- {
-  int siz=0;
-  while (*txt)
-   {
-    for(;*txt && *txt != '&' && *txt != '\t';txt++,siz++);
-    switch (*txt)
-     {
-      case '&'  : siz--;
-		  break;
-      case '\t' : for(txt++,siz++;*txt && txt;txt++,siz++);
-		   if (*txt == '\t')
-		       *txt = 32;
-		  break;
-     }
-    if (*txt)
-     {
-      txt++;
-      siz++;
-     }
-   }
-  *txt = '\0';
-  return ++siz;
- }
-
-char *SetPrompt(char *Src, char *Dst, byte& Pos)
- {
-  int  i=Pos=0;
-  char *Addr=(char*)NULL;
-  while(*Src)
-   {
-    for(;*Src && *Src != '&' && *Src != '\t'; Src++,i++)
-	 Dst[i] = *Src;
-    switch (*Src)
-     {
-      case '&'  : Dst[i] = *++Src;
-		  if (*Src != '&')
-		    Pos = i;
-		  break;
-      case '\t' : Dst[i]   = '\0';
-		  Addr = (char*)(Dst+i+1);
-		  break;
-     }
-    if (*Src)
-     {
-      Src++;
-      i++;
-     }
-   }
-   Dst[i] = '\0';
-   return (Addr == (char*)NULL) ? (char*)(Dst+i):Addr;
- }
-
-int Status(char *fmt,...)
- {
-  char Hlp[255];
-  va_list argptr;
-  byte len;
-  int  cnt;
-  byte OffSet = 0;
-  byte x = 1;
-
-  va_start(argptr, fmt);
-  cnt = vsprintf(Hlp, fmt, argptr);
-  va_end(argptr);
-  len = strlen(Hlp);
-
-  HideMouseCursor();
-  TxtAttr = StatusBar.Txt;
-  FillChr(0,GetMaxY(),GetMaxX(),GetMaxY(),Blank);
-
-  for (OffSet=0;OffSet < len;OffSet++)
-   {
-    switch(Hlp[OffSet])
-     {
-      case '/' :switch(Hlp[OffSet+1])
-		{
-		 case '+':TxtAttr=StatusBar.TxtHi;
-			  OffSet++;
-			  break;
-		 case '-':TxtAttr=StatusBar.Txt;
-			  OffSet++;
-			  break;
-		 case '/':SetVidAt(DrwPg,x++,GetMaxY(),Hlp[OffSet],TxtAttr);
-			  OffSet++;
-			  break;
-		}
-		break;
-      case '\t':x += 4;
-		break;
-      default  :SetVidAt(DrwPg,x,GetMaxY(),Hlp[OffSet],TxtAttr);
-		x++;
-		break;
-     }
-  }
- ShowMouseCursor();
- return(cnt);
-}
-
-
-// Private members of class Menu
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
+// <<>>                                                         <<>>
+// <<>>                   Menu Module Source                    <<>>
+// <<>>                                                         <<>>
+// <<>>  <<>>  <<>>  <<>>  <<>>  <<*>>  <<>>  <<>>  <<>>  <<>>  <<>>
 
 byte Menu::Search(word ID,Pad *Q)
  {
@@ -343,16 +216,16 @@ byte Menu::Search(word ID,Pad *Q)
    {
      for (i=0;i<MaxPads && P[i].PadID != ID;i++);
       if (P[i].PadID==ID)
-	{
-	  found = 1;
-	  Q     = &P[i];
-	}
+        {
+          found = 1;
+          Q     = &P[i];
+        }
        else
-	{
-	 for (i=0;i<MaxPads && !found;i++)
-	   if (P[i].SubMenu)
-	     found  = P[i].SubMenu->Search(ID,Q);
-	}
+        {
+         for (i=0;i<MaxPads && !found;i++)
+           if (P[i].SubMenu)
+             found  = P[i].SubMenu->Search(ID,Q);
+        }
    }
   return found;
  }
@@ -435,17 +308,17 @@ byte Menu::NextPad(byte XorY,byte i)
      {
       if (P[i].swItem&MenuBreak)
        {
-	byte w=0;
-	byte j,R=(swMenu&Border) ? L+W-2:L+W;
-	for (j=i+1;j <= visL && w+XorY < R;j++)
-	if (!(P[j].swItem&HiddenPad))
-	   w += 1+Spc+Spc+strlen(P[j].Prompt);
-	if (w+XorY > R)
-	   w -= 1+Spc+Spc+strlen(P[j].Prompt);
-	XorY = R-w+1;
+        byte w=0;
+        byte j,R=(swMenu&Border) ? X+W-3:X+W-1;
+        for (j=i+1;j <= visL && w+XorY < R;j++)
+        if (!(P[j].swItem&HiddenPad))
+           w += 1+Spc+Spc+strlen(P[j].Cap->Txt);
+        if (w+XorY > R)
+           w -= 1+Spc+Spc+strlen(P[j].Cap->Txt);
+        XorY = R-w+1;
        }
       else
-	XorY+= Spc+Spc+1+strlen(P[i].Prompt);
+        XorY+= Spc+Spc+1+strlen(P[i].Cap->Txt);
      }
    }
   return(XorY);
@@ -453,37 +326,34 @@ byte Menu::NextPad(byte XorY,byte i)
 
 void Menu::DrawPad(byte xL,byte y,byte xR,Pad *Q,byte Txt,byte Hot)
  {
-   int x = xL;
+   byte x = xL;
    xL -= Spc;
    if (!(Q->swItem&NoShow) && (Q->swItem&RefreshPad))
     {
       TxtAttr = Txt;
-      FillChr(xL,y,xR,y,Blank);
-      xPrintf(x,y,Q->Prompt);
-
-      TxtAttr = Hot;
-      xPrintf(x+Q->Hot,y,"%c",Q->Prompt[Q->Hot]);
+      FillChr(xL,y,xR-xL+1,1,Blank);
+      Q->Cap->Parse(x,y,Txt,Hot);
       if (swMenu&MenuVt)
        {
-	xR -= Spc-1;
-	if (Q->SubMenu != (Menu*)NULL)
-	 {
-	  xPrintf(xR-1,y,"%c",RtTriAngl);
-	  xR -= 2;
-	 }
-	xPrintf(xR-strlen(Q->ShortCut),y,Q->ShortCut);
-	TxtAttr = Txt;
-	xL++;
-	if (Q->swItem&RadioPad)
-	 {
-	  xPrintf(xL  ,y,"( )");
-	  xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Sphere:Blank);
-	 }
-	if (Q->swItem&CheckPad)
-	 {
-	  xPrintf(xL  ,y,"[ ]");
-	  xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Tick:Blank);
-	 }
+        xR -= Spc-1;
+        if (Q->SubMenu != (Menu*)NULL)
+         {
+          xPrintf(xR-1,y,"%c",RtTriAngl);
+          xR -= 2;
+         }
+        xPrintf(xR-strlen(Q->Cap->ShortCut),y,Q->Cap->ShortCut);
+        TxtAttr = Txt;
+        xL++;
+        if (Q->swItem&RadioPad)
+         {
+          xPrintf(xL  ,y,"( )");
+          xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Sphere:Blank);
+         }
+        if (Q->swItem&CheckPad)
+         {
+          xPrintf(xL  ,y,"[ ]");
+          xPrintf(xL+1,y,"%c",(Q->swItem&PadState)? Tick:Blank);
+         }
        }
     }
  }
@@ -493,28 +363,28 @@ void Menu::DrawMenu()
   byte Flag=0x00;
   byte i;
   HideMouseCursor();
-  y   = T;
-  x   = L+1+Spc;
-  R   = (swMenu&MenuVt) ? L+W-3:L+W-2;
-  B   = T+H-1;
+  y   = Y;
+  x   = X+1+Spc;
+  R   = X+W-3;
+  B   = Y+H-1;
 
   if (swMenu&UpdateScr)
    {
-    TxtAttr = MenuColSch->Txt;
-    FillChr(L,T,R+2,B,Blank);
-    TxtAttr = MenuColSch->Box;
+    TxtAttr = cs->Txt;
+    FillChr(X,Y,W,H,Blank);
+    TxtAttr = cs->Box;
     if (swMenu&Border)
      {
-      DrawBox(x-Spc,T,R+1,B,(swMenu&BoxStyle)>>BoxShft);
+      DrawBox(x-Spc,Y,R+1,B,(swMenu&MnuBoxStyle)>>MnuBoxShft);
       if (swMenu&Shadow)
-	BoxShadow(L,T,R+2,B);
+        BoxShadow(X,Y,R+2,B);
      }
     if (swMenu&MenuVt)
      {
       if (visF >0 || visL < MaxPads-1)
        {
-	xPrintf(R-3-(Spc/2),T,"[%c]",uArrow);
-	xPrintf(R-3-(Spc/2),B,"[%c]",dArrow);
+        xPrintf(R-3-(Spc/2),Y,"[%c]",uArrow);
+        xPrintf(R-3-(Spc/2),B,"[%c]",dArrow);
        }
      }
     for (i=visF;i<=visL;i++)
@@ -534,26 +404,26 @@ void Menu::DrawMenu()
     if (P[i].swItem&MenuBreak)
      {
        if ((swMenu&MenuVt) && (P[i].swItem&RefreshPad))
-	{
-	  TxtAttr = MenuColSch->Box;
-	  DrawLineHz(x-Spc-1,y,R+1,((swMenu&BoxStyle)>>BoxShft)&0x01);
-	}
+        {
+          TxtAttr = cs->Box;
+          DrawLineHz(x-Spc-1,y,R+1,((swMenu&MnuBoxStyle)>>MnuBoxShft)&0x01);
+        }
        Flag = 0x10;
      }
     else if (i == Hot)
      {
-       DrawPad(x,y,R,&P[i],MenuColSch->Xec,MenuColSch->XecHi);
+       DrawPad(x,y,R,&P[i],cs->Xec,cs->XecHi);
        if (P[i].SubMenu != (Menu*)NULL)
-	 if (Flag&0x10)
-	   P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? L+Spc+5:R-P[i].SubMenu->W,y+1);
-	 else
-	   P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? L+Spc+5:x,y+1);
-       Status(P[i].Msg);
+         if (Flag&0x10)
+           P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? X+Spc+5:R-P[i].SubMenu->W,y+1);
+         else
+           P[i].SubMenu->SetOrigin((swMenu&MenuVt) ? X+Spc+5:x,y+1);
+       //Status(P[i].Msg);
      }
     else if (P[i].swItem&ActivePad)
-      DrawPad(x,y,R,&P[i],MenuColSch->Txt,MenuColSch->TxtHi);
+      DrawPad(x,y,R,&P[i],cs->Txt,cs->TxtHi);
     else
-      DrawPad(x,y,R,&P[i],MenuColSch->Lck,MenuColSch->Lck);
+      DrawPad(x,y,R,&P[i],cs->Lck,cs->Lck);
 
 
     if (!(P[i].swItem&HiddenPad))
@@ -563,157 +433,53 @@ void Menu::DrawMenu()
        y = NextPad(y,i);
       else
        {
-	 x = NextPad(x,i);
-	 R = NextPad(x,i+1)-2;
+         x = NextPad(x,i);
+         R = NextPad(x,i+1)-2;
        }
      }
    }
   ShowMouseCursor();
  }
-byte Menu::MenuMouse()
+
+void Menu::Open()
  {
-  byte rvFlag=0x00;
-  byte p = visF;
-//  rvFlag = MouseMoved();  verify mouse move or clix
-//  MouseClix();
-//  if (rvFlag || ms_Clix)
-  if (!(ms_x < L || ms_x >L+W-1 || ms_y < T || ms_y > T+H-1))
-   {
-    if (swMenu&MenuVt)
-     {
-      byte y=T+1;
-      while (p != visL && y < ms_y)
-       {
-	 y=NextPad(y,p);
-	 p++;
-       }
-      rvFlag = (y==ms_y && P[p].swItem&ActivePad)? RefreshMenu:0;
-     }
-    else
-     {
-      byte x=NextPad(L+1,p);
-      while (p != visL && x-1 < ms_x)
-       {
-	p++;
-	x = NextPad(x,p);
-       }
-      if (P[p].swItem&ActivePad)
-	rvFlag = (x-1 > ms_x && L < ms_x) ? RefreshMenu:0;
-     }
-     if (rvFlag&RefreshMenu)
-      {
-       Hot     = p;
-       rvFlag ^= (ms_Clix&LeftClick) ? XecPad:0;
-      }
+   HideMouseCursor();
+   Ptr->MnuX.Capture(Ptr->X,Ptr->Y,Ptr->W,Ptr->H);
+   Ptr->swMenu |= UpdateScr;
+   SetDrawPg(RufPg);
+   Ptr->DrawMenu();
+   SetDrawPg(ActPg);
+
+   Ptr->MnuX.ShowEffect(Ptr->X,Ptr->Y,Ptr->W,Ptr->H);
+   ShowMouseCursor();
+ }
+byte Menu::ShutMenu(byte Flag)
+ {
+   if (Ptr != this)
+    {
+      Ptr->MnuX.UndoEffect();
+      //Ptr->MnuX.Restore();
+      Ptr->MnuX.Delete();
+      Ptr = Ptr->Ptr;        // Pop
     }
    else
-      rvFlag ^= (ms_Clix&LeftClick) ? Close :0;
-
-  FlushMouse();
-
-  return(rvFlag);
- }
-
-byte Menu::MenuCtrl()
- {
-  byte Flag = 0x00;
-  byte HotKey;
-  word Key;
-  byte p = Hot,n=0;
-  if (KeyHit())
-   {
-    Key = GetKey();
-    switch(Key)
-     {
-      case LtArr: if (!(swMenu&MenuVt))
-		     ScrollPadPrv();
-		  else if (Ptr != this && !(Ptr->swMenu&MenuVt))
-		   {
-		     Ptr->ScrollPadPrv();
-		     Flag ^= (Ptr->P[Ptr->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= (Ptr != this) ? Close:0;
-		  break;
-      case RtArr: if (!(swMenu&MenuVt))
-		     ScrollPadNxt();
-		  else if (Ptr != this && !(Ptr->swMenu&MenuVt))
-		   {
-		     Ptr->ScrollPadNxt();
-		     Flag ^= (Ptr->P[Ptr->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= XecPad;
-		  break;
-      case UpArr: if (swMenu&MenuVt)
-		     ScrollPadPrv();
-		  else if ((Ptr != this) && (Ptr->swMenu&MenuVt))
-		   {
-		     Ptr->ScrollPadPrv();
-		     Flag ^= (Ptr->P[Ptr->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= (Ptr != this) ? Close:0;
-		  break;
-      case DnArr: if (swMenu&MenuVt)
-		     ScrollPadNxt();
-		  else if ((Ptr != this) && (Ptr->swMenu&MenuVt))
-		   {
-		     Ptr->ScrollPadNxt();
-		     Flag ^= (Ptr->P[Ptr->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= XecPad;
-		  break;
-      case EscKy: Flag = Close;  break;
-      case RetKy: Flag = XecPad; break;
-      case SpcKy: Flag = XecPad; break;
-      default   : Key = UpCase(Key&0x00FF);
-		  n=visF;
-		  for (n=visF;n <= visL && !(Flag&XecPad);n++)
-		   {
-		    if (P[n].swItem&ActivePad)
-		     {
-		      HotKey = UpCase(P[n].Prompt[P[n].Hot]);
-		      Flag   = (Key == HotKey)?  XecPad:0;
-		     }
-		   }
-		  if (Flag&XecPad) Hot = --n;
-		  break;
-     }
-   }
-  else if (MouseExists())
-   {
-     Flag = MenuMouse();
-     if (!Flag && Ptr != this)
-      {
-       n = Hot;
-       Flag = Ptr->MenuMouse();
-      // if (Flag&RefreshMenu)
-      //   Flag |= (this != Ptr->P[Hot].SubMenu) ? enu)? XecAndClose:Close:0;
-       //PadC = MnuG->H;
-       //Spc=(MnuG->swMenu&PadSpc)>>SpcShft;
-      }
-     //PadN = PadC;
-     //if (Flag&RefreshMenu)
-       //  Flag ^= RefreshMenu;
-   }
-  if (Hot != p)
-   {
-     P[Hot].swItem |= RefreshPad;
-     P[p].swItem   |= RefreshPad;
-     DrawMenu();// actually drawpad hot,drawpad p or refresh pads p
-     //Status(P[Hot]->Msg);
-   }
-  return(Flag);
+    {
+      Ptr->swMenu ^= MenuOpen;
+      Ptr->P[Ptr->Hot].swItem |= RefreshPad;
+      Ptr->Hot = Ptr->MaxPads;
+      Ptr->DrawMenu();
+    }
+   Flag &= MaskClose;
+   return Flag;
  }
 
 // Public members of Class Menu
 
 Menu::Menu()
  {
-   L=T=W=H=N=0;
-   MenuColSch = &CoolBlue;
+   SetEventID(EventMenu);
+   X=Y=W=H=N=0;
+   cs = &CoolBlue;
    Spc     = 1;
    Ptr     = this;
    P       = (Pad*)NULL;
@@ -721,9 +487,10 @@ Menu::Menu()
  }
 Menu::Menu(word MenuType,byte MaxItem)
  {
-   L=T=W=H=N=Hot=0;
-   MenuColSch = &CoolBlue;
+   SetEventID(EventMenu);
+   X=Y=W=H=N=Hot=0;
    swMenu     = MenuType&MaskMenuFlags;
+   cs         = &CoolBlue;
    Ptr        = this;
    TxtAttr    = 0x0F;
    MaxPads    = MaxItem;
@@ -732,7 +499,8 @@ Menu::Menu(word MenuType,byte MaxItem)
    P          = new Pad[MaxPads];
    H          = (swMenu&MenuVt) ? MaxPads+2:(swMenu&Border) ? 3:1;
    Spc        = (swMenu&MenuVt) ? 2:0;
-   W          = (swMenu&MenuVt) ? 0:GetMaxX();
+   W          = (swMenu&MenuVt) ? 0:Screen.Width;
+   MnuX.SetEffect((MenuType&ShowEff)>>EffShft);
  }
 Menu::~Menu()
  {
@@ -741,23 +509,21 @@ Menu::~Menu()
     {
       if (P[i].SubMenu != (Menu*)NULL)
        if (P[i].SubMenu->swMenu&InternalAlloc)
-	  delete P[i].SubMenu;
+          delete P[i].SubMenu;
        else
-	  P[i].SubMenu->Ptr = (Menu*)NULL;
-      delete P[i].Prompt;
+          P[i].SubMenu->Ptr = (Menu*)NULL;
+      delete P[i].Cap->Txt;
       P[i].SubMenu  = (Menu*)NULL;
       P[i].PadApp   = NoApp;
-      P[i].ShortCut = (char*)NULL;
+      //P[i].ShortCut = (char*)NULL;
     }
    delete P;
  }
 
-byte Menu::addPad(char *Txt, word PadType)
+byte Menu::AddPad(char *Txt, word PadType)
  {
   byte   PadErr=0;
-  static word MenuID=0x100;
-  //char S[20];
-  Pad  *Q;
+  Pad   *Q;
   while (Ptr->MaxPads == Ptr->N && Ptr != this)
    {
      //width,height,location setup -- optional
@@ -771,10 +537,8 @@ byte Menu::addPad(char *Txt, word PadType)
     Q           = &Ptr->P[Ptr->N];
     Q->swItem   = PadType&MaskPadFlags;
     Q->PadID    = (Q->swItem&MenuBreak) ? 0xFFFF:MenuID++;
-    Q->Prompt   = new char[1+LabelAllocSize(Txt)];
-    Q->ShortCut = SetPrompt(Txt,Q->Prompt,Q->Hot);
-    //Q->HotKey   = StrToKey(Q->ShortCut);    to be added to shortcuts
-    Q->Msg      = new(char[1]);
+    Q->Cap      = new Caption(Txt);
+    Q->Msg      = new char[1];
     Q->PadApp   = NoApp;
     Q->SubMenu  = (Menu*)NULL;
     Q->Msg[0]   = '\0';
@@ -782,35 +546,35 @@ byte Menu::addPad(char *Txt, word PadType)
      {
       if (Q->swItem&SetSpc)
        {
-	Ptr->W  += (Spc < 5) ? (5-Spc):0;
-	Ptr->Spc = max(5,Ptr->Spc);
+        Ptr->W  += (Spc < 5) ? (5-Spc):0;
+        Ptr->Spc = max(5,Ptr->Spc);
        }
-      int Wd  = strlen(Q->Prompt)+strlen(Q->ShortCut);
-      Wd     += (Wd > strlen(Q->Prompt)) ? 2:0;
+      int Wd  = strlen(Q->Cap->Txt)+strlen(Q->Cap->ShortCut);
+      Wd     += (Wd > strlen(Q->Cap->Txt)) ? 2:0;
       Ptr->W = max(Ptr->W,Wd+2*Ptr->Spc+4);
-      Ptr->L = (Ptr->L+Ptr->W > GetMaxX()-1) ? GetMaxX()-2-Ptr->W:Ptr->L;
+      Ptr->X = (Ptr->X+Ptr->W > GetMaxX()-1) ? GetMaxX()-2-Ptr->W:Ptr->X;
      }
     Ptr->N++;
    }
    return PadErr;
  }
-byte Menu::addPad(char *Txt, word PadType,App PadApp)
+byte Menu::AddPad(char *Txt, word PadType,App PadApp)
  {
-   byte PadErr = addPad(Txt,PadType);
+   byte PadErr = AddPad(Txt,PadType);
    if (!PadErr)
       Ptr->P[Ptr->N-1].PadApp = PadApp;
    return PadErr;
  }
-byte Menu::addPad(char *Txt, word PadType,Menu *Sub)
+byte Menu::AddPad(char *Txt, word PadType,Menu *Sub)
  {
-   byte PadErr = addPad(Txt,PadType);
+   byte PadErr = AddPad(Txt,PadType);
    if (!PadErr)
       Ptr->P[Ptr->N-1].SubMenu = Sub;
    return PadErr;
  }
-byte Menu::addPad(char *Txt,word PadType,char *Hlp)
+byte Menu::AddPad(char *Txt,word PadType,char *Hlp)
  {
-   byte PadErr = addPad(Txt,PadType);
+   byte PadErr = AddPad(Txt,PadType);
    Pad  *Q;
    if (!PadErr)
     {
@@ -821,9 +585,9 @@ byte Menu::addPad(char *Txt,word PadType,char *Hlp)
     }
    return PadErr;
  }
-byte Menu::addPad(char *Txt,word PadType,App PadApp,char *Hlp)
+byte Menu::AddPad(char *Txt,word PadType,App PadApp,char *Hlp)
  {
-   byte PadErr = addPad(Txt,PadType);
+   byte PadErr = AddPad(Txt,PadType);
    Pad  *Q;
    if (!PadErr)
     {
@@ -835,7 +599,7 @@ byte Menu::addPad(char *Txt,word PadType,App PadApp,char *Hlp)
     }
    return PadErr;
  }
-byte Menu::addMenu(word MenuType,byte MaxItem)
+byte Menu::AddMenu(word MenuType,byte MaxItem)
  {
    byte err=0;
    Pad  *Q;
@@ -845,28 +609,20 @@ byte Menu::addMenu(word MenuType,byte MaxItem)
      Q->SubMenu             = new Menu(MenuType,MaxItem);
      Q->SubMenu->swMenu    ^= InternalAlloc;
      Q->SubMenu->Ptr        = Ptr;   // pop pointer;
-     Q->SubMenu->MenuColSch = MenuColSch;
+     Q->SubMenu->cs = cs;
      if (Ptr->swMenu&MenuVt)
       {
-       int Wd  = strlen(Q->Prompt)+strlen(Q->ShortCut);
-       Wd     += (Wd > strlen(Q->Prompt)) ? 10:7;
+       int Wd  = strlen(Q->Cap->Txt)+strlen(Q->Cap->ShortCut);
+       Wd     += (Wd > strlen(Q->Cap->Txt)) ? 10:7;
        Wd     += 2*Ptr->Spc;
        Ptr->W  = max(Ptr->W,Wd);
       }
      Ptr = Q->SubMenu;  // as good as push
-
-    /* if (Ptr->swMenu&MenuVt)
-      {
-       Ptr->H = min(1+Ptr->MaxPads,GetMaxY()-2);
-       Ptr->W = 8;
-      }
-     else
-      Ptr->W = GetMaxX();*/
     }
    else err = 1;
    return err;
  }
-byte Menu::addMenu(Menu *M)
+byte Menu::AddMenu(Menu *M)
  {
    byte err=0;
    Pad  *Q; // no coordinate setup will be assigned by user
@@ -876,13 +632,13 @@ byte Menu::addMenu(Menu *M)
      Q->SubMenu          = M;
      Q->SubMenu->Ptr     = Ptr;   // pop pointer;
      if (!(Q->SubMenu->swMenu&Colorised))
-       Q->SubMenu->MenuColSch = MenuColSch;
+       Q->SubMenu->cs = cs;
      Ptr = Q->SubMenu;  // as good as push
     }
    else err = 1;
    return err;
  }
-byte Menu::addHelp(word MenuID,char *Hlp)
+byte Menu::AddHelp(word MenuID,char *Hlp)
  {
    Pad *Q;
    byte rvFlag=Search(MenuID,Q);
@@ -893,51 +649,23 @@ byte Menu::addHelp(word MenuID,char *Hlp)
     }
    return rvFlag;
  }
-void Menu::addColor(byte Txt,byte TxtHi,byte Xec,byte XecHi,byte Lck,byte Box)
- {
-   if (!(swMenu&Colorised))
-    {
-      MenuColSch = new Scheme;
-      swMenu    ^= Colorised;
-    }
-   MenuColSch->Txt   = Txt;
-   MenuColSch->TxtHi = TxtHi;
-   MenuColSch->Xec   = Xec;
-   MenuColSch->XecHi = XecHi;
-   MenuColSch->Lck   = Lck;
-   MenuColSch->Box   = Box;
- }
-void Menu::addColor(Scheme *Sch)
- {
-   if (swMenu&Colorised)
-    {
-      delete MenuColSch;
-      swMenu ^= Colorised;
-    }
-   MenuColSch = Sch;
- }
 
-void Menu::endMenu()
+
+void Menu::EndMenu()
  {
    while (Ptr->MaxPads == Ptr->N && Ptr != this)
-   {
+    {
      Ptr->swMenu ^= FullMenu;
      Ptr          = Ptr->Ptr;    // as good as pop
-   }
- }
-void Menu::SetOrigin(int X,int Y)
- {
-   L = X;
-   T = Y;
-   //if (swMenu&MenuVt)
-      L = (L+W > GetMaxX())  ? GetMaxX()-W-Spc-5:L;
-  /* else
-    {
-      R = R-Spc-1;
-      P[i].SubMenu->L  = x+strlen(P[i].Prompt)+strlen(P[i].ShortCut);//L + X - Spc - P[i].SubMenu->X-2;
     }
-   P[i].SubMenu->L -= P[i].SubMenu->W+1;
-   P[i].SubMenu->L  = (x+P[i].SubMenu->W>R) ? P[i].SubMenu->L:x;*/
+   if (swMenu&MainAppMenu)
+     swMenu ^= ((swMenu&MenuVt)) ? MainAppMenu:0;
+ }
+void Menu::SetOrigin(byte x,byte y)
+ {
+   X = x;
+   Y = y;
+   X = (X+W > GetMaxX())  ? GetMaxX()-W-Spc-5:X;
  }
 byte Menu::SetState(word MenuID,bool State)
  {
@@ -946,9 +674,9 @@ byte Menu::SetState(word MenuID,bool State)
    if (rvFlag)
     {
       if (State)
-	Q->swItem |= PadState;
+        Q->swItem |= PadState;
       else
-	Q->swItem &= MaskPadState;
+        Q->swItem &= MaskPadState;
     }
    return rvFlag;
  }
@@ -969,9 +697,9 @@ byte Menu::Activity(word MenuID,bool OnOff)
    if (rvFlag)
     {
       if (OnOff)
-	Q->swItem |= ActivePad;
+        Q->swItem |= ActivePad;
       else
-	Q->swItem &= MaskActivity;
+        Q->swItem &= MaskActivity;
     }
    return rvFlag;
  }
@@ -982,166 +710,133 @@ byte Menu::Visibility(word MenuID,bool OnOff)
    if (rvFlag)
     {
       if (OnOff)
-	Q->swItem &= MaskVisibility;
+        Q->swItem &= MaskVisibility;
       else
-	Q->swItem |= HiddenPad;
+        Q->swItem |= HiddenPad;
     }
    return rvFlag;
- }
-
-word Menu::XecMenu()
- {
-  byte rvFlag=0x00;
-  Scheme SavStat=StatusBar;
-  StatusBar = *MenuColSch;
-  Image Sav;
-  SetDrawPg(RufPg);
-  swMenu |= UpdateScr;
-  DrawMenu();
-  HideMouseCursor();
-  SetDrawPg(0);
-  SaveVidBlock(&Sav,DrwPg,L,T,L+W,T+H);
-  DspRufArea(L,T,L+W-1,T+H-1,(swMenu&ShowEff)>>EffShft);
-  ShowMouseCursor();
-  swMenu |= UpdateScr;
-  DrawMenu();  //to be removed when noeffects corrected
-  do
-   {
-      while (!(rvFlag&XecOrClose))
-	 rvFlag=MenuCtrl();
-
-      if (rvFlag&XecPad && !(rvFlag&CloseMenu))
-       {
-	if (P[Hot].SubMenu != (Menu*)NULL)
-	  {
-	   rvFlag = P[Hot].SubMenu->XecMenu();
-	   DrawMenu();
-	   rvFlag &= MaskClose;
-	  }
-	else if (P[Hot].PadApp != (App)NULL)
-	  {
-	   P[Hot].PadApp();
-	   rvFlag ^= XecPad;
-	  }
-	else
-	 {
-	   if (P[Hot].swItem&CheckPad)
-	     P[Hot].swItem ^= PadState;
-	   if (P[Hot].swItem&RadioPad && !(P[Hot].swItem&PadState))
-	    {
-	     int i;
-	     for (i=Hot-1;i >= visF && P[i].swItem&RadioPad;i--);
-	     for (i++;i <= visL && P[i].swItem&RadioPad;i++)
-	       P[i].swItem &= MaskPadState;
-	     P[Hot].swItem ^= PadState;
-	    }
-	   rvFlag = Close;
-	 }
-       }
-   }
-  while (!(rvFlag&CloseMenu));
-  if (Ptr != this) // main menu
-    UndoEffect(&Sav,L,T,L+W-1,T+H-1,(swMenu&ShowEff)>>EffShft);
-  //else
-    //delete Sav;
-  StatusBar = SavStat;
-  return rvFlag;
  }
 
 
 bool Menu::KeyDown(word Key)
  {
+  bool rvHndl = false;
   byte Flag = 0x00;
   byte HotKey;
-  byte p = Ptr->Hot,n=0;
+  byte p=Ptr->Hot;
+  byte n=0;
 
-
-  if (Ptr != this || swMenu&MenuOpen)
+  MenuID = 0xFFFF;
+  if (!(swMenu&MenuOpen))
    {
-     // Scan Codes
+     if (Ptr==this && (swMenu&MainAppMenu))
+      {
+       for (n=0;n<MaxPads && !rvHndl;n++)
+         rvHndl = (bool)((P[n].swItem&ActivePad) && Key == P[n].Cap->HotKey);
+       if (rvHndl)
+        {
+         swMenu|=MenuOpen;
+         Hot = n-1;
+         Open();
+         XecPadApp(XecPad);
+        }
+       else rvHndl = false;
+      }
+    // else Scan for app xec no opening of submenu
    }
   else
    {
     Menu *Prv = Ptr->Ptr;
+    byte pp = Prv->Hot;
+    rvHndl  = true;
     switch(Key)
      {
       case LtArr: if (!(Ptr->swMenu&MenuVt))
-		     Ptr->ScrollPadPrv();
-		  else if (Ptr != this && !(Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadPrv();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= (Ptr != this) ? Close:0;
-		  break;
-      case RtArr: if (!(swMenu&MenuVt))
-		     Ptr->ScrollPadNxt();
-		  else if (Ptr != this && !(Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadNxt();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= XecPad;
-		  break;
-      case UpArr: if (swMenu&MenuVt)
-		     Ptr->ScrollPadPrv();
-		  else if ((Prv != this) && (Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadPrv();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= (Ptr != this) ? Close:0;
-		  break;
-      case DnArr: if (swMenu&MenuVt)
-		     Ptr->ScrollPadNxt();
-		  else if ((Ptr != this) && (Prv->swMenu&MenuVt))
-		   {
-		     Prv->ScrollPadNxt();
-		     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
-		   }
-		  else
-		     Flag ^= XecPad;
-		  break;
+                     Ptr->ScrollPadPrv();
+                  else if (Ptr != this && !(Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadPrv();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= (Ptr != this) ? Close:0;
+                  break;
+      case RtArr: if (!(Ptr->swMenu&MenuVt))
+                     Ptr->ScrollPadNxt();
+                  else if (Ptr != this && !(Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadNxt();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= XecPad;
+                  break;
+      case UpArr: if (Ptr->swMenu&MenuVt)
+                     Ptr->ScrollPadPrv();
+                  else if ((Prv != this) && (Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadPrv();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= (Ptr != this) ? Close:0;
+                  break;
+      case DnArr: if (Ptr->swMenu&MenuVt)
+                     Ptr->ScrollPadNxt();
+                  else if ((Ptr != this) && (Prv->swMenu&MenuVt))
+                   {
+                     Prv->ScrollPadNxt();
+                     Flag ^= (Prv->P[Prv->Hot].SubMenu) ? XecAndClose:Close;
+                   }
+                  else
+                     Flag ^= XecPad;
+                  break;
       case EscKy: Flag = Close;  break;
       case RetKy: Flag = XecPad; break;
       case SpcKy: Flag = XecPad; break;
-      default   : Key = UpCase(Key&0x00FF);
-		  n=visF;
-		  for (n=visF;n <= visL && !(Flag&XecPad);n++)
-		   {
-		    if (Ptr->P[n].swItem&ActivePad)
-		     {
-		      HotKey = UpCase(Ptr->P[n].Prompt[Ptr->P[n].Hot]);
-		      Flag   = (Key == HotKey)?  XecPad:0;
-		     }
-		   }
-		  if (Flag&XecPad) Ptr->Hot = --n;
-		  break;
+      default   : Key = UpCase(Key);
+                  for (n=visF;n <= visL && !(Flag&XecPad);n++)
+                   {
+                    if (Ptr->P[n].swItem&ActivePad)
+                     {
+                      HotKey = UpCase(Ptr->P[n].Cap->Txt[Ptr->P[n].Hot]);
+                      Flag   = (Key == HotKey)?  XecPad:0;
+                     }
+                   }
+                  if (Flag&XecPad)
+                     Ptr->Hot = n-1;
+                  break;
+     }
+    if (Prv->Hot != pp)
+     {
+       Prv->P[Prv->Hot].swItem |= RefreshPad;
+       Prv->P[pp].swItem       |= RefreshPad;
+       Prv->DrawMenu();
      }
     if (Ptr->Hot != p)
-    {
-     Ptr->P[Hot].swItem |= RefreshPad;
-     Ptr->P[p].swItem   |= RefreshPad;
-     Ptr->DrawMenu();
-     XecPadApp(Flag);
-    }
+     {
+       Ptr->P[Ptr->Hot].swItem |= RefreshPad;
+       Ptr->P[p].swItem        |= RefreshPad;
+       Ptr->DrawMenu();
+     }
+    XecPadApp(Flag);
+
    }
-   return true;
+   return rvHndl;
  }
 bool Menu::MouseMove(int mx,int my)
  {
   bool rvEvtProcessed=false;
   byte p = Ptr->visF;
-  byte r = Ptr->L+Ptr->W-1;
-  byte b = Ptr->T+Ptr->H-1;
-  if (!(mx < Ptr->L || mx > r || my < Ptr->T || my > b))
+  byte r = Ptr->X+Ptr->W-1;
+  byte b = Ptr->Y+Ptr->H-1;
+
+  MenuID = 0xFFFF;
+  if (!(mx < Ptr->X || mx > r || my < Ptr->Y || my > b))
    {
     if (Ptr->swMenu&MenuVt)
      {
-       byte y=Ptr->T+1;
+       byte y=Ptr->Y+1;
        while (p != Ptr->visL && y < my)
          y=Ptr->NextPad(y,p++);
        rvEvtProcessed = (bool)(y==my && Ptr->P[--p].swItem&ActivePad);
@@ -1149,10 +844,10 @@ bool Menu::MouseMove(int mx,int my)
      }
     else
      {
-      byte x=Ptr->NextPad(Ptr->L+1,p);
+      byte x=Ptr->NextPad(Ptr->X+1,p);
       while (p != Ptr->visL && x-1 < mx)
-	x = Ptr->NextPad(x,++p);
-      rvEvtProcessed = (bool)(x-1 > mx && Ptr->L < mx && (Ptr->P[p].swItem&ActivePad));
+        x = Ptr->NextPad(x,++p);
+      rvEvtProcessed = (bool)(x-1 > mx && Ptr->X < mx && (Ptr->P[p].swItem&ActivePad));
      }
     if (rvEvtProcessed)
     {
@@ -1170,15 +865,17 @@ bool Menu::MouseLeftClick(int mx,int my)
   bool rvEvtProcessed=false;
   byte Flag = 0x00;
   byte p = Ptr->visF;
-  byte r = Ptr->L+Ptr->W-1;
-  byte b = Ptr->T+Ptr->H-1;
-  if (!(mx < Ptr->L || mx > r || my < Ptr->T || my > b))
+  byte r = Ptr->X+Ptr->W-1;
+  byte b = Ptr->Y+Ptr->H-1;
+
+  MenuID = 0xFFFF;
+  if (!(mx < Ptr->X || mx > r || my < Ptr->Y || my > b))
    {
     if (Ptr->swMenu&MenuVt)
      {
        if (Ptr->visF>0 || Ptr->visL<Ptr->MaxPads)
          if (mx == r-Spc)
-          if (my==Ptr->T)
+          if (my==Ptr->Y)
            {
              Ptr->ScrollPadPrv();
              Flag = 0x01;
@@ -1190,7 +887,7 @@ bool Menu::MouseLeftClick(int mx,int my)
            }
        if (!rvEvtProcessed)
         {
-         byte y=Ptr->T+1;
+         byte y=Ptr->Y+1;
          while (p != Ptr->visL && y < my)
            y=Ptr->NextPad(y,p++);
          Flag = (y==my && Ptr->P[--p].swItem&ActivePad) ? 0x11:0;
@@ -1198,11 +895,11 @@ bool Menu::MouseLeftClick(int mx,int my)
      }
     else
      {
-      byte x=Ptr->NextPad(Ptr->L+1,p);
+      byte x=Ptr->NextPad(Ptr->X+1,p);
       while (p != Ptr->visL && x-1 < mx)
-	x = Ptr->NextPad(x,++p);
+        x = Ptr->NextPad(x,++p);
       if (Ptr->P[p].swItem&ActivePad)
-      Flag = (x-1 > mx && Ptr->L < mx) ? 0x11:0;
+      Flag = (x-1 > mx && Ptr->X < mx) ? 0x11:0;
 
      }
     if (Flag)
@@ -1218,67 +915,42 @@ bool Menu::MouseLeftClick(int mx,int my)
    }
   return rvEvtProcessed;
  }
-byte Menu::ShutMenu(byte Flag)
- {
-   if (Ptr != this)
-    {
-      byte r=Ptr->L+Ptr->W-1,
-           b=Ptr->T+Ptr->H-1;
-      UndoEffect(Ptr->Sav,Ptr->L,Ptr->T,r,b,(Ptr->swMenu&ShowEff)>>EffShft);
-      Ptr = Ptr->Ptr;        // Pop
-    }
-   else
-      Ptr->swMenu ^= MenuOpen;
-   Flag &= MaskClose;
-   return Flag;
- }
 void Menu::XecPadApp(byte Flag)
  {
-  Scheme SavStat=StatusBar;
-  StatusBar = *MenuColSch;
+//  Scheme SavStat=StatusBar;
+//  StatusBar = *cs;
   byte x,y,r,b;
+
+  if (Flag&Close)
+     Flag = ShutMenu(Flag);
   Pad *Q=&Ptr->P[Ptr->Hot];
-  if (Flag&CloseMenu)
-   Flag = ShutMenu(Flag);
-  if (Flag&XecPad && !(Flag&CloseMenu))
+  if (Flag&XecPad && !(Flag&CloseAll))
    {
     if (Q->SubMenu != (Menu*)NULL)
      {
        Ptr=Q->SubMenu; // Push
-       byte  x=Ptr->L,
-             y=Ptr->T,
-             r=Ptr->L+Ptr->W-1,
-             b=Ptr->T+Ptr->H-1;
-       SetDrawPg(RufPg);
-       swMenu |= UpdateScr;
-       DrawMenu();
-       HideMouseCursor();
-       SetDrawPg(0);
-       SaveVidBlock(Ptr->Sav,DrwPg,x,y,r+1,b+1);
-       DspRufArea(x,y,r,b,(swMenu&ShowEff)>>EffShft);
-       ShowMouseCursor();
-       swMenu |= UpdateScr;
-       Flag   &= MaskClose;
+       Open();
+       Flag &= MaskClose;
      }
     else if (Q->PadApp != (App)NULL)
      {
        Q->PadApp();
        Flag ^= XecPad;
-       //MenuID = Q->PadID;
+       MenuID = Q->PadID;
      }
     else
      {
-       //MenuID = Q->PadID;
+       MenuID = Q->PadID;
        if (Q->swItem&CheckPad)
-	   Q->swItem ^= PadState;
+           Q->swItem ^= PadState;
        if (Q->swItem&RadioPad && !(Q->swItem&PadState))
         {
-	  int i;
-	  for (i=Ptr->Hot-1;i >= Ptr->visF && Ptr->P[i].swItem&RadioPad;i--);
-	  for (i++;i <= Ptr->visL && Ptr->P[i].swItem&RadioPad;i++)
-	     Ptr->P[i].swItem &= MaskPadState;
-	  Q->swItem ^= PadState;
-	}
+          int i;
+          for (i=Ptr->Hot-1;i >= Ptr->visF && Ptr->P[i].swItem&RadioPad;i--);
+          for (i++;i <= Ptr->visL && Ptr->P[i].swItem&RadioPad;i++)
+             Ptr->P[i].swItem &= MaskPadState;
+          Q->swItem ^= PadState;
+        }
        Flag = Close;
      }
    }
@@ -1291,8 +963,22 @@ void Menu::XecPadApp(byte Flag)
       Flag = ShutMenu(Flag);
    }
 
-  StatusBar = SavStat;
+ // StatusBar = SavStat;
  }
+
+word Menu::GetMenuID()
+ {
+   return MenuID;
+ }
+bool Menu::Show()
+ {
+   Hot=0xFF;
+   swMenu |= UpdateScr;
+   if (!(swMenu&MenuOpen))
+       DrawMenu(); //Open();
+   return true;
+ }
+
 
 
 
